@@ -1,0 +1,6 @@
+{
+  "name": "WebCraft Goods",
+  "description": "Premium digital products marketplace and software showcase with Firebase Admin CMS.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

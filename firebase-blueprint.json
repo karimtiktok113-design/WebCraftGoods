@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Digital product or software showcase item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "shortDescription": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "price": { "type": "string", "maxLength": 50 },
+        "category": { "type": "string", "maxLength": 50 },
+        "badge": { "type": "string", "maxLength": 30 },
+        "images": { "type": "array" },
+        "purchaseLink": { "type": "string", "maxLength": 1000 },
+        "features": { "type": "array" },
+        "status": { "type": "string", "maxLength": 20 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["title", "shortDescription", "price", "category", "images", "purchaseLink"]
+    },
+    "Feature": {
+      "title": "Feature",
+      "description": "Key feature or capability highlighted on the website",
+      "type": "object",
+      "properties": {
+        "icon": { "type": "string", "maxLength": 50 },
+        "heading": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 500 },
+        "order": { "type": "number" }
+      },
+      "required": ["icon", "heading", "description"]
+    },
+    "FAQ": {
+      "title": "FAQ",
+      "description": "Frequently asked question item",
+      "type": "object",
+      "properties": {
+        "question": { "type": "string", "maxLength": 200 },
+        "answer": { "type": "string", "maxLength": 2000 },
+        "order": { "type": "number" }
+      },
+      "required": ["question", "answer"]
+    },
+    "WebsiteContent": {
+      "title": "WebsiteContent",
+      "description": "Hero, About, and Footer dynamic configurations",
+      "type": "object",
+      "properties": {
+        "section": { "type": "string", "maxLength": 50 },
+        "data": { "type": "object" }
+      },
+      "required": ["section"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Inbound customer inquiry submitted via the contact form",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "subject": { "type": "string", "maxLength": 200 },
+        "message": { "type": "string", "maxLength": 3000 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "maxLength": 20 }
+      },
+      "required": ["name", "email", "message"]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized administrator record",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "maxLength": 30 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of digital products displayed on the marketplace"
+    },
+    "/features/{featureId}": {
+      "schema": "Feature",
+      "description": "Company and product features"
+    },
+    "/faqs/{faqId}": {
+      "schema": "FAQ",
+      "description": "Frequently asked questions"
+    },
+    "/website_content/{sectionId}": {
+      "schema": "WebsiteContent",
+      "description": "Dynamic CMS sections for hero, about, and footer"
+    },
+    "/messages/{messageId}": {
+      "schema": "ContactMessage",
+      "description": "Messages submitted through the public contact form"
+    },
+    "/admins/{adminId}": {
+      "schema": "AdminUser",
+      "description": "Admin access control records"
+    }
+  }
+}

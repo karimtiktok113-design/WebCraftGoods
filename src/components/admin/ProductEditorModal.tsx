@@ -11,6 +11,8 @@ import {
   Check,
   AlertCircle,
   Loader2,
+  Tag,
+  Percent,
 } from 'lucide-react';
 import { Product } from '../../types';
 import { compressImageFile } from '../../lib/imageUtils';
@@ -38,6 +40,13 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({
   const [purchaseLink, setPurchaseLink] = useState(product?.purchaseLink || '');
   const [status, setStatus] = useState<'active' | 'draft'>(product?.status || 'active');
 
+  // Discount states
+  const [isDiscounted, setIsDiscounted] = useState<boolean>(product?.isDiscounted || false);
+  const [originalPrice, setOriginalPrice] = useState<string>(product?.originalPrice || '');
+  const [discountPercentage, setDiscountPercentage] = useState<number | ''>(
+    typeof product?.discountPercentage === 'number' ? product.discountPercentage : ''
+  );
+
   // Multi-image list state
   const [images, setImages] = useState<string[]>(
     product?.images && product.images.length > 0 ? product.images : []
@@ -63,6 +72,20 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({
         setShortDescription(product.shortDescription || '');
         setDescription(product.description || '');
         setPrice(product.price || '$49');
+        setIsDiscounted(product.isDiscounted || Boolean(product.originalPrice && product.originalPrice !== product.price));
+        setOriginalPrice(product.originalPrice || '');
+        setDiscountPercentage(
+          typeof product.discountPercentage === 'number'
+            ? product.discountPercentage
+            : (product.originalPrice && product.price
+                ? Math.round(
+                    ((parseFloat(product.originalPrice.replace(/[^0-9.]/g, '')) -
+                      parseFloat(product.price.replace(/[^0-9.]/g, ''))) /
+                      parseFloat(product.originalPrice.replace(/[^0-9.]/g, ''))) *
+                      100
+                  ) || ''
+                : '')
+        );
         setCategory(product.category || 'Planners & OS');
         setBadge(product.badge || '');
         setPurchaseLink(product.purchaseLink || '');
@@ -78,6 +101,9 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({
         setShortDescription('');
         setDescription('');
         setPrice('$49');
+        setIsDiscounted(false);
+        setOriginalPrice('');
+        setDiscountPercentage('');
         setCategory('Planners & OS');
         setBadge('');
         setPurchaseLink('');
@@ -94,7 +120,73 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Add image by URL
+  // Discount calculation helpers
+  const extractNumericPrice = (val: string): number => {
+    const cleaned = val.replace(/[^0-9.]/g, '');
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  };
+
+  const extractCurrencySymbol = (val: string): string => {
+    const match = val.match(/^[^0-9.]+/);
+    return match ? match[0].trim() || '$' : '$';
+  };
+
+  const formatPriceDisplay = (num: number, customSymbol?: string): string => {
+    const symbol = customSymbol || extractCurrencySymbol(price) || '$';
+    if (num <= 0) return `${symbol}0`;
+    return Number.isInteger(num) ? `${symbol}${num}` : `${symbol}${num.toFixed(2)}`;
+  };
+
+  const handleToggleDiscount = (enabled: boolean) => {
+    setIsDiscounted(enabled);
+    if (enabled) {
+      if (!originalPrice) {
+        const currentNumeric = extractNumericPrice(price);
+        const currSymbol = extractCurrencySymbol(price);
+        if (currentNumeric > 0) {
+          const suggestedOriginal = Math.round(currentNumeric * 1.4);
+          setOriginalPrice(`${currSymbol}${suggestedOriginal}`);
+          setDiscountPercentage(Math.round(((suggestedOriginal - currentNumeric) / suggestedOriginal) * 100));
+        } else {
+          setOriginalPrice('$89');
+          setDiscountPercentage(30);
+        }
+      }
+    }
+  };
+
+  const handleOriginalPriceChange = (val: string) => {
+    setOriginalPrice(val);
+    const origNum = extractNumericPrice(val);
+    const currentPriceNum = extractNumericPrice(price);
+    if (origNum > 0 && currentPriceNum > 0 && currentPriceNum < origNum) {
+      const pct = Math.round(((origNum - currentPriceNum) / origNum) * 100);
+      setDiscountPercentage(pct);
+    } else if (typeof discountPercentage === 'number' && discountPercentage > 0 && origNum > 0) {
+      const discountedVal = origNum * (1 - discountPercentage / 100);
+      setPrice(formatPriceDisplay(discountedVal));
+    }
+  };
+
+  const handleDiscountPercentChange = (val: string) => {
+    if (val === '') {
+      setDiscountPercentage('');
+      return;
+    }
+    const pct = parseInt(val, 10);
+    if (isNaN(pct)) return;
+    const clampedPct = Math.max(1, Math.min(99, pct));
+    setDiscountPercentage(clampedPct);
+
+    const origNum = extractNumericPrice(originalPrice);
+    if (origNum > 0) {
+      const discountedVal = origNum * (1 - clampedPct / 100);
+      setPrice(formatPriceDisplay(discountedVal));
+    }
+  };
+
+  // Add image via URL
   const handleAddImageUrl = () => {
     if (!newImageUrl.trim()) return;
     setImages([...images, newImageUrl.trim()]);
@@ -209,6 +301,9 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({
         shortDescription: shortDescription.trim(),
         description: description.trim(),
         price: price.trim(),
+        originalPrice: isDiscounted ? originalPrice.trim() : undefined,
+        discountPercentage: isDiscounted && typeof discountPercentage === 'number' ? discountPercentage : undefined,
+        isDiscounted: isDiscounted,
         category: category.trim() || 'Planners & OS',
         badge: badge.trim(),
         images,
@@ -326,6 +421,133 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({
                 <option value="draft">Draft (Hidden)</option>
               </select>
             </div>
+          </div>
+
+          {/* Discount & Special Pricing Settings Card */}
+          <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+            isDiscounted
+              ? 'bg-amber-500/5 border-amber-500/40 shadow-lg shadow-amber-500/5'
+              : 'bg-slate-950/60 border-slate-800'
+          }`}>
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+                  isDiscounted ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'
+                }`}>
+                  <Percent className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-white font-heading">
+                    Discount & Promotional Sale
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    Display original strikethrough price, discounted sale price, and % off badge.
+                  </p>
+                </div>
+              </div>
+
+              {/* Toggle Switch */}
+              <button
+                type="button"
+                onClick={() => handleToggleDiscount(!isDiscounted)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isDiscounted ? 'bg-amber-500' : 'bg-slate-800'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    isDiscounted ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {isDiscounted && (
+              <div className="pt-3 border-t border-slate-800/80 space-y-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                      Original Regular Price
+                    </label>
+                    <input
+                      type="text"
+                      value={originalPrice}
+                      onChange={(e) => handleOriginalPriceChange(e.target.value)}
+                      placeholder="e.g. $89 or $99"
+                      className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 outline-none"
+                    />
+                    <span className="text-[10px] text-slate-500 mt-0.5 block">Shown with strikethrough</span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                      Discount Percentage (%)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="1"
+                        max="95"
+                        value={discountPercentage}
+                        onChange={(e) => handleDiscountPercentChange(e.target.value)}
+                        placeholder="e.g. 40"
+                        className="w-full px-3 py-1.5 pr-7 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 outline-none"
+                      />
+                      <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold pointer-events-none">
+                        %
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-slate-500 mt-0.5 block">Auto-computes sale price</span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-amber-400 mb-1">
+                      Final Sale / Selling Price *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={price}
+                      onChange={(e) => {
+                        setPrice(e.target.value);
+                        const origNum = extractNumericPrice(originalPrice);
+                        const newNum = extractNumericPrice(e.target.value);
+                        if (origNum > 0 && newNum > 0 && newNum < origNum) {
+                          setDiscountPercentage(Math.round(((origNum - newNum) / origNum) * 100));
+                        }
+                      }}
+                      placeholder="e.g. $49"
+                      className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-amber-500/60 text-amber-300 font-bold text-xs focus:border-amber-400 outline-none"
+                    />
+                    <span className="text-[10px] text-amber-500/80 mt-0.5 block">Customer charged this price</span>
+                  </div>
+                </div>
+
+                {/* Live Preview Bar */}
+                <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-slate-400 font-medium">Customer View:</span>
+                    <div className="flex items-center gap-2">
+                      <span className="line-through text-slate-500 font-semibold tabular-nums">
+                        {originalPrice || '$89'}
+                      </span>
+                      <span className="text-amber-400 font-extrabold text-sm tabular-nums">
+                        {price || '$49'}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950 uppercase tracking-wider">
+                        {discountPercentage ? `${discountPercentage}% OFF` : 'ON SALE'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {extractNumericPrice(originalPrice) > extractNumericPrice(price) && (
+                    <div className="text-[11px] text-emerald-400 font-semibold">
+                      Customer saves {formatPriceDisplay(extractNumericPrice(originalPrice) - extractNumericPrice(price))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

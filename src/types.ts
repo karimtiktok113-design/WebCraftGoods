@@ -4,6 +4,9 @@ export interface Product {
   shortDescription: string;
   description: string;
   price: string;
+  originalPrice?: string;
+  discountPercentage?: number;
+  isDiscounted?: boolean;
   category: string;
   badge?: string;
   images: string[];
@@ -51,15 +54,33 @@ export interface AboutContent {
   }[];
 }
 
+export interface FooterLinkItem {
+  id: string;
+  label: string;
+  href: string;
+}
+
 export interface FooterContent {
   brandDescription: string;
   contactEmail: string;
   copyrightText: string;
+  badgeText?: string;
+  column1Title?: string;
+  column1Links?: FooterLinkItem[];
+  column2Title?: string;
+  column2Links?: FooterLinkItem[];
+  column3Title?: string;
+  column3Text?: string;
+  column3ButtonText?: string;
+  column3ButtonHref?: string;
   socialLinks: {
-    twitter: string;
-    github: string;
-    dribbble: string;
-    linkedin: string;
+    twitter?: string;
+    github?: string;
+    dribbble?: string;
+    linkedin?: string;
+    discord?: string;
+    youtube?: string;
+    instagram?: string;
   };
 }
 

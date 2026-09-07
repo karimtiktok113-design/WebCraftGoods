@@ -109,12 +109,21 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const items: Product[] = [];
           snapshot.forEach((docSnap) => {
             const data = docSnap.data();
+            const originalPrice = data.originalPrice || '';
+            const price = data.price || '$0';
+            const isDiscounted = data.isDiscounted !== undefined
+              ? Boolean(data.isDiscounted)
+              : Boolean(originalPrice && originalPrice !== price);
+
             items.push({
               id: docSnap.id,
               title: data.title || '',
               shortDescription: data.shortDescription || '',
               description: data.description || '',
-              price: data.price || '$0',
+              price: price,
+              originalPrice: originalPrice,
+              discountPercentage: typeof data.discountPercentage === 'number' ? data.discountPercentage : undefined,
+              isDiscounted: isDiscounted,
               category: data.category || 'General',
               badge: data.badge || '',
               images: Array.isArray(data.images) && data.images.length > 0 ? data.images : ['https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'],
@@ -215,7 +224,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } else if (id === 'about' && data) {
               newContent.about = { ...INITIAL_WEBSITE_CONTENT.about, ...data };
             } else if (id === 'footer' && data) {
-              newContent.footer = { ...INITIAL_WEBSITE_CONTENT.footer, ...data };
+              newContent.footer = {
+                ...INITIAL_WEBSITE_CONTENT.footer,
+                ...data,
+                column1Links: Array.isArray(data.column1Links) && data.column1Links.length > 0
+                  ? data.column1Links
+                  : INITIAL_WEBSITE_CONTENT.footer.column1Links,
+                column2Links: Array.isArray(data.column2Links) && data.column2Links.length > 0
+                  ? data.column2Links
+                  : INITIAL_WEBSITE_CONTENT.footer.column2Links,
+                socialLinks: {
+                  ...INITIAL_WEBSITE_CONTENT.footer.socialLinks,
+                  ...(data.socialLinks || {}),
+                },
+              };
             } else if (id === 'theme' && data) {
               newContent.theme = { ...INITIAL_WEBSITE_CONTENT.theme, ...data };
             }
@@ -270,6 +292,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       shortDescription: product.shortDescription?.trim() || '',
       description: product.description?.trim() || '',
       price: product.price.trim(),
+      originalPrice: product.originalPrice?.trim() || '',
+      discountPercentage: product.discountPercentage !== undefined ? Number(product.discountPercentage) : undefined,
+      isDiscounted: Boolean(product.isDiscounted),
       category: product.category?.trim() || 'Planners & OS',
       badge: product.badge?.trim() || '',
       images:
@@ -306,6 +331,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ...(product.shortDescription !== undefined ? { shortDescription: product.shortDescription.trim() } : {}),
       ...(product.description !== undefined ? { description: product.description.trim() } : {}),
       ...(product.price ? { price: product.price.trim() } : {}),
+      ...(product.originalPrice !== undefined ? { originalPrice: product.originalPrice.trim() } : {}),
+      ...(product.discountPercentage !== undefined ? { discountPercentage: Number(product.discountPercentage) } : {}),
+      ...(product.isDiscounted !== undefined ? { isDiscounted: Boolean(product.isDiscounted) } : {}),
       ...(product.purchaseLink ? { purchaseLink: product.purchaseLink.trim() } : {}),
       ...(product.badge !== undefined ? { badge: product.badge.trim() } : {}),
     });

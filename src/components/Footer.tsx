@@ -1,7 +1,22 @@
 import React from 'react';
-import { Package, Twitter, Github, Dribbble, Linkedin, ArrowUp, Sun, Moon } from 'lucide-react';
+import {
+  Package,
+  Twitter,
+  Github,
+  Dribbble,
+  Linkedin,
+  ArrowUp,
+  Sun,
+  Moon,
+  MessageSquare,
+  Youtube,
+  Instagram,
+  ExternalLink,
+  ShieldCheck,
+} from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useTheme } from '../context/ThemeContext';
+import { FooterLinkItem } from '../types';
 
 interface FooterProps {
   onOpenAdmin: () => void;
@@ -17,15 +32,45 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLinkClick = (href: string) => {
-    if (onNavigateHome) {
-      onNavigateHome();
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href === '#admin') {
+      e.preventDefault();
+      onOpenAdmin();
+      return;
+    }
+    if (href.startsWith('#')) {
+      if (onNavigateHome) {
+        onNavigateHome();
+      }
       setTimeout(() => {
         const el = document.querySelector(href);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
       }, 100);
     }
   };
+
+  // Fallback defaults for columns
+  const col1Links: FooterLinkItem[] =
+    footer.column1Links && footer.column1Links.length > 0
+      ? footer.column1Links
+      : [
+          { id: '1', label: 'All Products', href: '#products' },
+          { id: '2', label: 'Notion Planners', href: '#products' },
+          { id: '3', label: 'UI Kits & Design', href: '#products' },
+          { id: '4', label: 'Financial Models', href: '#products' },
+        ];
+
+  const col2Links: FooterLinkItem[] =
+    footer.column2Links && footer.column2Links.length > 0
+      ? footer.column2Links
+      : [
+          { id: '1', label: 'About Us', href: '#about' },
+          { id: '2', label: 'Features', href: '#features' },
+          { id: '3', label: 'FAQ & Licensing', href: '#faq' },
+          { id: '4', label: 'Direct Support', href: '#contact' },
+        ];
 
   return (
     <footer id="main-footer" className="bg-slate-950 border-t border-slate-800/80 pt-12 sm:pt-16 pb-10 sm:pb-12 text-slate-400 text-xs w-full overflow-hidden">
@@ -42,6 +87,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
               <span className="text-lg font-bold text-white font-heading">
                 WebCraft<span className="text-amber-400">Goods</span>
               </span>
+              {footer.badgeText && (
+                <span className="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  {footer.badgeText}
+                </span>
+              )}
             </div>
 
             <p className="text-slate-400 font-light leading-relaxed max-w-sm mb-5">
@@ -49,7 +99,20 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
                 'WebCraft Goods engineers elite digital templates, Notion systems, and developer boilerplates for modern professionals and teams.'}
             </p>
 
-            <div className="flex items-center gap-2.5">
+            {footer.contactEmail && (
+              <p className="text-[11px] text-slate-500 mb-4">
+                Inquiries:{' '}
+                <a
+                  href={`mailto:${footer.contactEmail}`}
+                  className="text-amber-400/90 hover:text-amber-300 underline underline-offset-2 transition-colors"
+                >
+                  {footer.contactEmail}
+                </a>
+              </p>
+            )}
+
+            {/* Social Links List */}
+            <div className="flex flex-wrap items-center gap-2">
               {footer.socialLinks?.twitter && (
                 <a
                   href={footer.socialLinks.twitter}
@@ -94,80 +157,107 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
                   <Linkedin className="w-4 h-4" />
                 </a>
               )}
+              {footer.socialLinks?.discord && (
+                <a
+                  href={footer.socialLinks.discord}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-amber-400 transition-colors active:scale-95"
+                  aria-label="Discord"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                </a>
+              )}
+              {footer.socialLinks?.youtube && (
+                <a
+                  href={footer.socialLinks.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-amber-400 transition-colors active:scale-95"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="w-4 h-4" />
+                </a>
+              )}
+              {footer.socialLinks?.instagram && (
+                <a
+                  href={footer.socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-amber-400 transition-colors active:scale-95"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Dynamic Column 1 (Marketplace) */}
           <div className="md:col-span-2">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-3 sm:mb-4 font-heading">
-              Marketplace
+              {footer.column1Title || 'Marketplace'}
             </h4>
             <ul className="space-y-2 sm:space-y-2.5">
-              <li>
-                <a href="#products" className="hover:text-white transition-colors py-1 inline-block">
-                  All Products
-                </a>
-              </li>
-              <li>
-                <a href="#products" className="hover:text-white transition-colors py-1 inline-block">
-                  Notion Planners
-                </a>
-              </li>
-              <li>
-                <a href="#products" className="hover:text-white transition-colors py-1 inline-block">
-                  UI Kits & Design
-                </a>
-              </li>
-              <li>
-                <a href="#products" className="hover:text-white transition-colors py-1 inline-block">
-                  Financial Models
-                </a>
-              </li>
+              {col1Links.map((link) => (
+                <li key={link.id}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => handleLinkClick(e, link.href)}
+                    className="hover:text-amber-400 transition-colors py-1 inline-block"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Company & Support */}
+          {/* Dynamic Column 2 (Company & Support) */}
           <div className="md:col-span-2">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-3 sm:mb-4 font-heading">
-              Company
+              {footer.column2Title || 'Company'}
             </h4>
             <ul className="space-y-2 sm:space-y-2.5">
-              <li>
-                <a href="#about" className="hover:text-white transition-colors py-1 inline-block">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#features" className="hover:text-white transition-colors py-1 inline-block">
-                  Features
-                </a>
-              </li>
-              <li>
-                <a href="#faq" className="hover:text-white transition-colors py-1 inline-block">
-                  FAQ & Licensing
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className="hover:text-white transition-colors py-1 inline-block">
-                  Direct Support
-                </a>
-              </li>
+              {col2Links.map((link) => (
+                <li key={link.id}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => handleLinkClick(e, link.href)}
+                    className="hover:text-amber-400 transition-colors py-1 inline-block"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Admin & Security */}
+          {/* Dynamic Column 3 (Admin & Governance / Action) */}
           <div className="sm:col-span-2 md:col-span-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-3 sm:mb-4 font-heading">
-              Admin & Governance
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-3 sm:mb-4 font-heading flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              <span>{footer.column3Title || 'Admin & Governance'}</span>
             </h4>
-            <p className="text-slate-400 text-xs mb-3">
-              Protected by Firebase Authentication with real-time Firestore database synchronization.
+            <p className="text-slate-400 text-xs mb-3 leading-relaxed font-light">
+              {footer.column3Text ||
+                'Protected by Firebase Authentication with real-time Firestore database synchronization.'}
             </p>
             <button
-              onClick={onOpenAdmin}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-amber-400 font-semibold text-xs transition-colors active:scale-95"
+              onClick={() => {
+                if (footer.column3ButtonHref && footer.column3ButtonHref !== '#admin') {
+                  if (footer.column3ButtonHref.startsWith('http')) {
+                    window.open(footer.column3ButtonHref, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = footer.column3ButtonHref;
+                  }
+                } else {
+                  onOpenAdmin();
+                }
+              }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-amber-400 font-semibold text-xs transition-colors active:scale-95 shadow-sm"
             >
-              Open Admin CMS Portal
+              <span>{footer.column3ButtonText || 'Open Admin CMS Portal'}</span>
             </button>
           </div>
         </div>
@@ -222,3 +312,4 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
     </footer>
   );
 };
+

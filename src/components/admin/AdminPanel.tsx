@@ -124,8 +124,70 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
   const handleResetFooter = () => {
     if (websiteContent.footer) {
-      setFooterForm({ ...INITIAL_WEBSITE_CONTENT.footer, ...websiteContent.footer });
+      setFooterForm({
+        ...INITIAL_WEBSITE_CONTENT.footer,
+        ...websiteContent.footer,
+        column1Links:
+          Array.isArray(websiteContent.footer.column1Links) && websiteContent.footer.column1Links.length > 0
+            ? websiteContent.footer.column1Links
+            : INITIAL_WEBSITE_CONTENT.footer.column1Links,
+        column2Links:
+          Array.isArray(websiteContent.footer.column2Links) && websiteContent.footer.column2Links.length > 0
+            ? websiteContent.footer.column2Links
+            : INITIAL_WEBSITE_CONTENT.footer.column2Links,
+      });
     }
+  };
+
+  // Footer dynamic links management
+  const handleAddCol1Link = () => {
+    const current = footerForm.column1Links || [];
+    setFooterForm({
+      ...footerForm,
+      column1Links: [
+        ...current,
+        { id: `col1-${Date.now()}`, label: 'New Link', href: '#products' },
+      ],
+    });
+  };
+
+  const handleUpdateCol1Link = (index: number, field: 'label' | 'href', value: string) => {
+    const current = [...(footerForm.column1Links || [])];
+    if (current[index]) {
+      current[index] = { ...current[index], [field]: value };
+      setFooterForm({ ...footerForm, column1Links: current });
+    }
+  };
+
+  const handleDeleteCol1Link = (index: number) => {
+    const current = [...(footerForm.column1Links || [])];
+    current.splice(index, 1);
+    setFooterForm({ ...footerForm, column1Links: current });
+  };
+
+  const handleAddCol2Link = () => {
+    const current = footerForm.column2Links || [];
+    setFooterForm({
+      ...footerForm,
+      column2Links: [
+        ...current,
+        { id: `col2-${Date.now()}`, label: 'New Link', href: '#about' },
+      ],
+    });
+  };
+
+  const handleUpdateCol2Link = (index: number, field: 'label' | 'href', value: string) => {
+    const current = [...(footerForm.column2Links || [])];
+    if (current[index]) {
+      current[index] = { ...current[index], [field]: value };
+      setFooterForm({ ...footerForm, column2Links: current });
+    }
+  };
+
+  const handleDeleteCol2Link = (index: number) => {
+    const current = [...(footerForm.column2Links || [])];
+    current.splice(index, 1);
+    setFooterForm({ ...footerForm, column2Links: current });
   };
 
   // Image upload handler for Hero mockup

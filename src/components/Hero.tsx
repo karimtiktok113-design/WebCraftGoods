@@ -35,12 +35,12 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-heading leading-[1.15] sm:leading-[1.1] mb-4 sm:mb-6 break-words">
+            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-heading leading-[1.18] sm:leading-[1.1] mb-4 sm:mb-6">
               {hero.heading}
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg lg:text-xl text-slate-300 sm:text-slate-400 leading-relaxed max-w-2xl mb-6 sm:mb-8 font-light">
+            <p className="text-sm sm:text-lg lg:text-xl text-slate-300 sm:text-slate-400 leading-relaxed max-w-2xl mb-6 sm:mb-8 font-light">
               {hero.subtitle}
             </p>
 
@@ -49,16 +49,16 @@ export const Hero: React.FC = () => {
               <a
                 id="hero-primary-cta"
                 href={hero.primaryButtonLink || '#products'}
-                className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:opacity-95 text-slate-950 font-bold text-sm tracking-wide shadow-xl shadow-amber-500/20 hover:shadow-amber-500/30 transition-all text-center w-full sm:w-auto active:scale-[0.98]"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-xl shadow-amber-500/20 hover:shadow-amber-500/30 transition-all text-center w-full sm:w-auto active:scale-[0.98] whitespace-nowrap"
               >
                 <span>{hero.primaryButtonText || 'Explore Products'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </a>
 
               <a
                 id="hero-secondary-cta"
                 href={hero.secondaryButtonLink || '#features'}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 text-slate-200 border border-slate-700/80 font-semibold text-sm transition-all hover:border-slate-600 text-center w-full sm:w-auto active:scale-[0.98]"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 text-slate-200 border border-slate-700/80 font-semibold text-xs sm:text-sm transition-all hover:border-slate-600 text-center w-full sm:w-auto active:scale-[0.98] whitespace-nowrap"
               >
                 <span>{hero.secondaryButtonText || 'Learn More'}</span>
               </a>
@@ -66,15 +66,15 @@ export const Hero: React.FC = () => {
 
             {/* Trust badges row */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-6 pt-5 sm:pt-6 border-t border-slate-800/80 w-full max-w-lg">
-              <div className="flex items-center gap-2 text-xs text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
                 <Download className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>Instant Digital Access</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
                 <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>Commercial License</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
                 <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>Lifetime Updates</span>
               </div>
@@ -116,16 +116,16 @@ export const Hero: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-80" />
 
                 {/* Overlay card info */}
-                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between text-white">
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-400">
+                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between text-white gap-2">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-400 block whitespace-nowrap">
                       Signature Release
                     </span>
-                    <h4 className="text-sm sm:text-base font-bold font-heading">Executive Command OS</h4>
+                    <h4 className="text-xs sm:text-base font-bold font-heading truncate">Executive Command OS</h4>
                   </div>
-                  <div className="text-right">
-                    <span className="text-[11px] text-slate-400 block">Starting at</span>
-                    <span className="text-base sm:text-lg font-extrabold text-amber-400 font-heading">$49</span>
+                  <div className="text-right shrink-0">
+                    <span className="text-[10px] sm:text-[11px] text-slate-400 block whitespace-nowrap">Starting at</span>
+                    <span className="text-base sm:text-lg font-black text-amber-400 font-heading whitespace-nowrap tabular-nums">$49</span>
                   </div>
                 </div>
               </div>
@@ -136,8 +136,8 @@ export const Hero: React.FC = () => {
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-400 font-medium">Customer Growth</div>
-                  <div className="text-xs font-bold text-white font-heading">+184% Speed</div>
+                  <div className="text-[10px] text-slate-400 font-medium whitespace-nowrap">Customer Growth</div>
+                  <div className="text-xs font-bold text-white font-heading whitespace-nowrap tabular-nums">+184% Speed</div>
                 </div>
               </div>
 
@@ -147,8 +147,8 @@ export const Hero: React.FC = () => {
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-400 font-medium">Verified Reviews</div>
-                  <div className="text-xs font-bold text-amber-400 font-heading">4.9 / 5.0 Rating</div>
+                  <div className="text-[10px] text-slate-400 font-medium whitespace-nowrap">Verified Reviews</div>
+                  <div className="text-xs font-bold text-amber-400 font-heading whitespace-nowrap tabular-nums">4.9 / 5.0 Rating</div>
                 </div>
               </div>
             </div>
@@ -159,18 +159,18 @@ export const Hero: React.FC = () => {
                 <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                   <TrendingUp className="w-3.5 h-3.5" />
                 </div>
-                <div>
-                  <div className="text-[9px] text-slate-400 font-medium">Execution</div>
-                  <div className="text-[11px] font-bold text-white font-heading">+184% Speed</div>
+                <div className="min-w-0">
+                  <div className="text-[9px] text-slate-400 font-medium whitespace-nowrap">Execution</div>
+                  <div className="text-[11px] font-bold text-white font-heading whitespace-nowrap tabular-nums">+184% Speed</div>
                 </div>
               </div>
               <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                 </div>
-                <div>
-                  <div className="text-[9px] text-slate-400 font-medium">Rating</div>
-                  <div className="text-[11px] font-bold text-amber-400 font-heading">4.9 / 5.0</div>
+                <div className="min-w-0">
+                  <div className="text-[9px] text-slate-400 font-medium whitespace-nowrap">Rating</div>
+                  <div className="text-[11px] font-bold text-amber-400 font-heading whitespace-nowrap tabular-nums">4.9 / 5.0</div>
                 </div>
               </div>
             </div>

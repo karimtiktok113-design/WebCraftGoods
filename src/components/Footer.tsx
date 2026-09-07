@@ -1,6 +1,7 @@
 import React from 'react';
-import { Package, Twitter, Github, Dribbble, Linkedin, ArrowUp } from 'lucide-react';
+import { Package, Twitter, Github, Dribbble, Linkedin, ArrowUp, Sun, Moon } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { useTheme } from '../context/ThemeContext';
 
 interface FooterProps {
   onOpenAdmin: () => void;
@@ -9,6 +10,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) => {
   const { websiteContent } = useData();
+  const { mode, toggleMode, activeTheme } = useTheme();
   const footer = websiteContent.footer;
 
   const scrollToTop = () => {
@@ -171,18 +173,50 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <p className="text-slate-500 text-xs">
-            {footer.copyrightText || '© 2026 WebCraft Goods Inc. All rights reserved.'}
-          </p>
+        <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <p className="text-slate-500 text-xs">
+              {footer.copyrightText || '© 2026 WebCraft Goods Inc. All rights reserved.'}
+            </p>
+            <span className="hidden sm:inline text-slate-700">•</span>
+            <div className="flex items-center gap-2">
+              <span
+                className="w-2 h-2 rounded-full shadow-sm"
+                style={{ backgroundColor: activeTheme.colors.primary }}
+              />
+              <span className="text-[11px] text-slate-400 font-medium">
+                Theme: <strong className="text-slate-300">{activeTheme.name}</strong>
+              </span>
+            </div>
+          </div>
 
-          <button
-            onClick={scrollToTop}
-            className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors py-1"
-          >
-            <span>Back to top</span>
-            <ArrowUp className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={toggleMode}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 hover:text-white transition-colors"
+              aria-label="Toggle Light or Dark Mode"
+            >
+              {mode === 'dark' ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Light Mode</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-slate-700" />
+                  <span>Dark Mode</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={scrollToTop}
+              className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors py-1"
+            >
+              <span>Back to top</span>
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </footer>

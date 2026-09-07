@@ -23,11 +23,13 @@ import {
   UploadCloud,
   MessageSquare,
   AlertCircle,
+  Palette,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { Product, Feature, FAQ } from '../../types';
 import { ProductEditorModal } from './ProductEditorModal';
+import { ThemeSettingsTab } from './ThemeSettingsTab';
 import { INITIAL_WEBSITE_CONTENT } from '../../lib/sampleData';
 import { compressImageFile } from '../../lib/imageUtils';
 
@@ -35,7 +37,7 @@ interface AdminPanelProps {
   onClose: () => void;
 }
 
-type AdminTab = 'overview' | 'products' | 'features' | 'faqs' | 'content' | 'messages';
+type AdminTab = 'overview' | 'products' | 'features' | 'faqs' | 'content' | 'theme' | 'messages';
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const { user, logout } = useAuth();
@@ -425,6 +427,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             </button>
 
             <button
+              onClick={() => setCurrentTab('theme')}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                currentTab === 'theme'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Palette className="w-4 h-4" />
+                <span>Theme & Branding</span>
+              </div>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  currentTab === 'theme'
+                    ? 'bg-slate-950 text-amber-300'
+                    : 'bg-amber-500/20 text-amber-300'
+                }`}
+              >
+                Themes
+              </span>
+            </button>
+
+            <button
               onClick={() => setCurrentTab('messages')}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 currentTab === 'messages'
@@ -508,6 +533,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               }`}
             >
               Website Content
+            </button>
+            <button
+              onClick={() => setCurrentTab('theme')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors shrink-0 ${
+                currentTab === 'theme' ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-300'
+              }`}
+            >
+              Themes & Modes
             </button>
             <button
               onClick={() => setCurrentTab('messages')}
@@ -1559,6 +1592,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               )}
             </div>
           )}
+
+          {/* THEME & BRANDING TAB */}
+          {currentTab === 'theme' && <ThemeSettingsTab />}
         </main>
       </div>
 

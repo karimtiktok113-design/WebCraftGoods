@@ -154,37 +154,37 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
       </div>
 
       {/* Product Content Details */}
-      <div className="p-5 flex-1 flex flex-col justify-between">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
-          {/* Price & Title */}
-          <div className="flex items-baseline justify-between gap-2 mb-2">
-            <h3 className="text-lg font-bold text-white font-heading tracking-tight line-clamp-1 group-hover:text-amber-300 transition-colors">
+          {/* Price & Title with strict whitespace-nowrap and tabular numbers */}
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h3 className="text-base sm:text-lg font-bold text-white font-heading tracking-tight line-clamp-1 group-hover:text-amber-300 transition-colors flex-1 min-w-0">
               {product.title}
             </h3>
-            <span className="text-lg font-extrabold text-amber-400 font-heading shrink-0">
+            <span className="text-base sm:text-lg font-black text-amber-400 font-heading shrink-0 whitespace-nowrap tabular-nums pl-1.5">
               {product.price}
             </span>
           </div>
 
           {/* Short description */}
-          <p className="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-4 font-light">
+          <p className="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-3.5 font-light">
             {product.shortDescription}
           </p>
 
           {/* Features Preview tags */}
           {product.features && product.features.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-5">
+            <div className="flex flex-wrap gap-1.5 mb-4">
               {product.features.slice(0, 2).map((feat, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800/80 text-[10px] text-slate-300 font-medium"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800/80 text-[10px] text-slate-300 font-medium whitespace-nowrap"
                 >
-                  <Sparkles className="w-2.5 h-2.5 text-amber-400" />
+                  <Sparkles className="w-2.5 h-2.5 text-amber-400 shrink-0" />
                   <span className="line-clamp-1">{feat}</span>
                 </span>
               ))}
               {product.features.length > 2 && (
-                <span className="px-1.5 py-0.5 rounded bg-slate-800/50 text-[10px] text-slate-400 font-medium">
+                <span className="px-1.5 py-0.5 rounded bg-slate-800/50 text-[10px] text-slate-400 font-medium whitespace-nowrap">
                   +{product.features.length - 2} more
                 </span>
               )}
@@ -192,7 +192,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           )}
         </div>
 
-        {/* Buttons Action Bar */}
+        {/* Buttons Action Bar - clean, responsive single line per button */}
         <div className="pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-2 mt-auto">
           <button
             id={`details-btn-${product.id}`}
@@ -201,20 +201,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
               e.stopPropagation();
               onSelect(product);
             }}
-            className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 text-xs font-semibold transition-colors border border-slate-700/60 active:scale-95"
+            className="flex items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 text-[11px] sm:text-xs font-semibold transition-colors border border-slate-700/60 active:scale-95 whitespace-nowrap"
           >
-            <Eye className="w-3.5 h-3.5 text-amber-400" />
-            <span>View Product</span>
+            <Eye className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="whitespace-nowrap">View Product</span>
           </button>
 
           <button
             id={`purchase-btn-${product.id}`}
             type="button"
             onClick={handlePurchaseClick}
-            className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow-sm shadow-amber-500/20 active:scale-95"
+            className="flex items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] sm:text-xs font-bold transition-all shadow-sm shadow-amber-500/20 active:scale-95 whitespace-nowrap"
           >
-            <ShoppingCart className="w-3.5 h-3.5" />
-            <span>Purchase</span>
+            <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+            <span className="whitespace-nowrap">Purchase</span>
           </button>
         </div>
       </div>

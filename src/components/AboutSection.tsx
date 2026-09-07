@@ -56,7 +56,7 @@ export const AboutSection: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4 w-full pt-5 sm:pt-6 border-t border-slate-800/80">
                 {about.stats.map((stat, i) => (
                   <div key={i} className="p-2 sm:p-0">
-                    <div className="text-xl sm:text-2xl font-extrabold text-amber-400 font-heading">
+                    <div className="text-lg sm:text-2xl font-black text-amber-400 font-heading whitespace-nowrap tabular-nums">
                       {stat.value}
                     </div>
                     <div className="text-xs text-slate-400 mt-0.5">{stat.label}</div>

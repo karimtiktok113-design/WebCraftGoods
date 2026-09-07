@@ -63,10 +63,29 @@ export interface FooterContent {
   };
 }
 
+export type ThemeMode = 'dark' | 'light';
+
+export type PremiumThemeId =
+  | 'amber-gold'
+  | 'emerald-royale'
+  | 'sapphire-midnight'
+  | 'amethyst-velvet'
+  | 'crimson-luxe'
+  | 'cyberpunk-neon'
+  | 'titanium-mono';
+
+export interface StoreThemeSettings {
+  activeThemeId: PremiumThemeId;
+  defaultMode: ThemeMode;
+  allowUserModeToggle?: boolean;
+  updatedAt?: string;
+}
+
 export interface WebsiteContent {
   hero: HeroContent;
   about: AboutContent;
   footer: FooterContent;
+  theme?: StoreThemeSettings;
 }
 
 export interface ContactMessage {

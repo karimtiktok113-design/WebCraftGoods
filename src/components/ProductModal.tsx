@@ -187,11 +187,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
               </div>
 
               {/* Title & Price */}
-              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 mb-4">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white font-heading tracking-tight">
+              <div className="flex flex-row items-baseline justify-between gap-2 sm:gap-4 mb-3 sm:mb-4">
+                <h2 className="text-lg sm:text-2xl md:text-3xl font-extrabold text-white font-heading tracking-tight min-w-0 flex-1">
                   {product.title}
                 </h2>
-                <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-heading shrink-0">
+                <div className="text-xl sm:text-2xl md:text-3xl font-black text-amber-400 font-heading shrink-0 whitespace-nowrap tabular-nums pl-2">
                   {product.price}
                 </div>
               </div>

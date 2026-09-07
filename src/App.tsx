@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { ProductsSection } from './components/ProductsSection';
@@ -132,7 +133,9 @@ export default function App() {
   return (
     <AuthProvider>
       <DataProvider>
-        <MainLayout />
+        <ThemeProvider>
+          <MainLayout />
+        </ThemeProvider>
       </DataProvider>
     </AuthProvider>
   );

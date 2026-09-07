@@ -115,4 +115,9 @@ export const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
       linkedin: 'https://linkedin.com',
     },
   },
+  theme: {
+    activeThemeId: 'amber-gold',
+    defaultMode: 'dark',
+    allowUserModeToggle: true,
+  },
 };

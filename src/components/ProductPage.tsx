@@ -264,12 +264,12 @@ export const ProductPage: React.FC<ProductPageProps> = ({
                 {product.title}
               </h1>
 
-              {/* Price Tag */}
-              <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-3xl sm:text-4xl font-extrabold text-amber-400 font-heading">
+              {/* Price Tag with tabular numbers and nowrap */}
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-5">
+                <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-amber-400 font-heading whitespace-nowrap tabular-nums">
                   {product.price}
                 </span>
-                <span className="text-xs text-slate-400 font-medium">
+                <span className="text-xs sm:text-sm text-slate-400 font-medium">
                   One-time fee • Lifetime license & updates included
                 </span>
               </div>
@@ -277,8 +277,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({
               {/* 2. TAGLINE (SUBHEADING) */}
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 mb-6">
                 <div className="flex items-center gap-1.5 text-xs text-amber-400 font-bold uppercase tracking-wider mb-1.5">
-                  <Tag className="w-3.5 h-3.5" />
-                  <span>Product Tagline</span>
+                  <Tag className="w-3.5 h-3.5 shrink-0" />
+                  <span className="whitespace-nowrap">Product Tagline</span>
                 </div>
                 <p className="text-sm sm:text-base text-slate-300 font-normal leading-relaxed">
                   {product.shortDescription ||
@@ -288,42 +288,42 @@ export const ProductPage: React.FC<ProductPageProps> = ({
 
               {/* Trust Value Points */}
               <div className="grid grid-cols-2 gap-2.5 text-xs text-slate-300 mb-6">
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-lg bg-slate-900/40 border border-slate-800/60 min-w-0">
                   <Download className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Instant Download</span>
+                  <span className="truncate">Instant Download</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-lg bg-slate-900/40 border border-slate-800/60 min-w-0">
                   <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Commercial Rights</span>
+                  <span className="truncate">Commercial Rights</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-lg bg-slate-900/40 border border-slate-800/60 min-w-0">
                   <RefreshCw className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Lifetime Updates</span>
+                  <span className="truncate">Lifetime Updates</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-lg bg-slate-900/40 border border-slate-800/60 min-w-0">
                   <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Verified Clean Code</span>
+                  <span className="truncate">Verified Clean Code</span>
                 </div>
               </div>
             </div>
 
             {/* 3. PURCHASE BUTTON & SHARE */}
-            <div className="pt-4 border-t border-slate-800/80 flex items-center gap-3">
+            <div className="pt-4 border-t border-slate-800/80 flex items-center gap-2.5 sm:gap-3">
               <button
                 id="product-page-purchase-btn"
                 onClick={handlePurchase}
-                className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm sm:text-base tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all transform active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2.5 px-3.5 sm:px-6 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm md:text-base tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all transform active:scale-95 whitespace-nowrap min-w-0"
               >
-                <ShoppingCart className="w-5 h-5 text-slate-950" />
-                <span>Purchase Now</span>
-                <span className="opacity-75">({product.price})</span>
-                <ExternalLink className="w-4 h-4 text-slate-950 ml-0.5" />
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-slate-950 shrink-0" />
+                <span className="whitespace-nowrap">Purchase Now</span>
+                <span className="opacity-80 font-black whitespace-nowrap tabular-nums">({product.price})</span>
+                <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
               </button>
 
               <button
                 onClick={handleShare}
                 title="Copy share link"
-                className="p-3.5 sm:p-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 active:scale-95 relative"
+                className="p-3 sm:p-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 active:scale-95 relative"
               >
                 {copied ? (
                   <Check className="w-5 h-5 text-emerald-400" />

@@ -42,7 +42,7 @@ interface DataContextType {
   addFaq: (faq: Omit<FAQ, 'id'>) => Promise<string>;
   updateFaq: (id: string, faq: Partial<FAQ>) => Promise<void>;
   deleteFaq: (id: string) => Promise<void>;
-  updateWebsiteContent: (section: 'hero' | 'about' | 'footer', data: any) => Promise<void>;
+  updateWebsiteContent: (section: 'hero' | 'about' | 'footer' | 'theme', data: any) => Promise<void>;
   submitContactMessage: (msg: { name: string; email: string; subject: string; message: string }) => Promise<void>;
   updateMessageStatus: (id: string, status: 'unread' | 'read') => Promise<void>;
   deleteMessage: (id: string) => Promise<void>;
@@ -216,6 +216,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
               newContent.about = { ...INITIAL_WEBSITE_CONTENT.about, ...data };
             } else if (id === 'footer' && data) {
               newContent.footer = { ...INITIAL_WEBSITE_CONTENT.footer, ...data };
+            } else if (id === 'theme' && data) {
+              newContent.theme = { ...INITIAL_WEBSITE_CONTENT.theme, ...data };
             }
           });
           setWebsiteContent(newContent);
@@ -422,7 +424,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Website Content
-  const updateWebsiteContent = async (section: 'hero' | 'about' | 'footer', data: any): Promise<void> => {
+  const updateWebsiteContent = async (section: 'hero' | 'about' | 'footer' | 'theme', data: any): Promise<void> => {
     const sanitized = sanitizeForFirestore(data);
 
     // Optimistic instant update across the live site and admin panel

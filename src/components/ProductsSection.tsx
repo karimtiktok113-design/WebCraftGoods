@@ -78,7 +78,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
                 key={cat}
                 id={`cat-filter-${cat.toLowerCase().replace(/\s+/g, '-')}`}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 active:scale-95 ${
+                className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 active:scale-95 whitespace-nowrap ${
                   selectedCategory === cat
                     ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold'
                     : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700'

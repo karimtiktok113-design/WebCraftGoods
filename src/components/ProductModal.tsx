@@ -179,6 +179,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
                 <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-[11px] sm:text-xs font-semibold">
                   {product.category}
                 </span>
+                {product.isDiscounted && (
+                  <span className="px-2.5 py-1 rounded-md bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[11px] sm:text-xs font-bold">
+                    {product.discountPercentage ? `${product.discountPercentage}% OFF` : 'ON SALE'}
+                  </span>
+                )}
                 {product.badge && (
                   <span className="px-2.5 py-1 rounded-md bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-bold">
                     {product.badge}
@@ -191,8 +196,15 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
                 <h2 className="text-lg sm:text-2xl md:text-3xl font-extrabold text-white font-heading tracking-tight min-w-0 flex-1">
                   {product.title}
                 </h2>
-                <div className="text-xl sm:text-2xl md:text-3xl font-black text-amber-400 font-heading shrink-0 whitespace-nowrap tabular-nums pl-2">
-                  {product.price}
+                <div className="flex flex-col items-end shrink-0 pl-2">
+                  <span className="text-xl sm:text-2xl md:text-3xl font-black text-amber-400 font-heading whitespace-nowrap tabular-nums">
+                    {product.price}
+                  </span>
+                  {product.isDiscounted && product.originalPrice && (
+                    <span className="text-xs sm:text-sm text-slate-400 line-through tabular-nums font-medium">
+                      {product.originalPrice}
+                    </span>
+                  )}
                 </div>
               </div>
 

@@ -252,6 +252,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({
                 <span className="px-3 py-1 rounded-md bg-slate-800/80 text-slate-300 text-xs font-semibold">
                   {product.category}
                 </span>
+                {product.isDiscounted && (
+                  <span className="px-3 py-1 rounded-md bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold">
+                    {product.discountPercentage ? `${product.discountPercentage}% OFF` : 'LIMITED TIME SALE'}
+                  </span>
+                )}
                 {product.badge && (
                   <span className="px-3 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold">
                     {product.badge}
@@ -269,6 +274,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({
                 <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-amber-400 font-heading whitespace-nowrap tabular-nums">
                   {product.price}
                 </span>
+                {product.isDiscounted && product.originalPrice && (
+                  <span className="text-base sm:text-lg text-slate-400 line-through tabular-nums font-semibold">
+                    {product.originalPrice}
+                  </span>
+                )}
                 <span className="text-xs sm:text-sm text-slate-400 font-medium">
                   One-time fee • Lifetime license & updates included
                 </span>

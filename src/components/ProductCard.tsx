@@ -92,25 +92,32 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           ))}
         </div>
 
-        {/* Top Badges: Category & Tag Badge */}
-        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-10">
-          <span className="px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-slate-300 text-[11px] font-semibold tracking-wide shadow-sm">
+        {/* Top Badges: Category & Tag Badge / Discount */}
+        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-10 gap-1.5">
+          <span className="px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-slate-300 text-[11px] font-semibold tracking-wide shadow-sm truncate">
             {product.category}
           </span>
 
-          {product.badge && (
-            <span
-              className={`px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide shadow-sm backdrop-blur-md ${
-                product.badge.toLowerCase().includes('best')
-                  ? 'bg-amber-500 text-slate-950 shadow-amber-500/30'
-                  : product.badge.toLowerCase().includes('new')
-                  ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30'
-                  : 'bg-indigo-500/90 text-white border border-indigo-400/30'
-              }`}
-            >
-              {product.badge}
-            </span>
-          )}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {product.isDiscounted && (
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-black tracking-wider bg-rose-500 text-white shadow-sm shadow-rose-500/30">
+                {product.discountPercentage ? `-${product.discountPercentage}%` : 'SALE'}
+              </span>
+            )}
+            {product.badge && (
+              <span
+                className={`px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide shadow-sm backdrop-blur-md ${
+                  product.badge.toLowerCase().includes('best')
+                    ? 'bg-amber-500 text-slate-950 shadow-amber-500/30'
+                    : product.badge.toLowerCase().includes('new')
+                    ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30'
+                    : 'bg-indigo-500/90 text-white border border-indigo-400/30'
+                }`}
+              >
+                {product.badge}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Carousel Navigation Arrows (desktop hover or mobile always available) */}
@@ -161,9 +168,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
             <h3 className="text-base sm:text-lg font-bold text-white font-heading tracking-tight line-clamp-1 group-hover:text-amber-300 transition-colors flex-1 min-w-0">
               {product.title}
             </h3>
-            <span className="text-base sm:text-lg font-black text-amber-400 font-heading shrink-0 whitespace-nowrap tabular-nums pl-1.5">
-              {product.price}
-            </span>
+            <div className="flex flex-col items-end shrink-0 pl-1.5">
+              <span className="text-base sm:text-lg font-black text-amber-400 font-heading whitespace-nowrap tabular-nums">
+                {product.price}
+              </span>
+              {product.isDiscounted && product.originalPrice && (
+                <span className="text-xs text-slate-500 line-through tabular-nums -mt-0.5 font-medium">
+                  {product.originalPrice}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Short description */}

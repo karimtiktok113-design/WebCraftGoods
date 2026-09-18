@@ -7,9 +7,9 @@ import {
   updateDoc,
   deleteDoc,
   addDoc,
-  serverTimestamp,
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { useAuth } from './AuthContext';
 import {
   Product,
   Feature,
@@ -23,6 +23,37 @@ import {
   INITIAL_FAQS,
   INITIAL_WEBSITE_CONTENT,
 } from '../lib/sampleData';
+
+const PRODUCTS_CACHE_KEY = 'webcraft_products_cache_v2';
+const CONTENT_CACHE_KEY = 'webcraft_content_cache_v2';
+const FEATURES_CACHE_KEY = 'webcraft_features_cache_v2';
+const FAQS_CACHE_KEY = 'webcraft_faqs_cache_v2';
+
+function loadCachedData<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(fallback)) {
+        return Array.isArray(parsed) && parsed.length > 0 ? (parsed as T) : fallback;
+      }
+      return parsed as T;
+    }
+  } catch {
+    // Ignore JSON parse errors and return fallback
+  }
+  return fallback;
+}
+
+function saveCachedData<T>(key: string, data: T): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch {
+    // Ignore storage quota or access errors
+  }
+}
 
 interface DataContextType {
   products: Product[];
@@ -74,7 +105,7 @@ export function sanitizeForFirestore<T>(obj: T): T {
 }
 
 // Helper to ensure Firestore operations fail fast instead of hanging the UI indefinitely
-const withTimeout = <T,>(promise: Promise<T>, timeoutMs = 15000, opName = 'Operation'): Promise<T> => {
+const withTimeout = <T,>(promise: Promise<T>, timeoutMs = 12000, opName = 'Operation'): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<never>((_, reject) =>
@@ -92,19 +123,37 @@ const withTimeout = <T,>(promise: Promise<T>, timeoutMs = 15000, opName = 'Opera
 };
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [features, setFeatures] = useState<Feature[]>(INITIAL_FEATURES);
-  const [faqs, setFaqs] = useState<FAQ[]>(INITIAL_FAQS);
-  const [websiteContent, setWebsiteContent] = useState<WebsiteContent>(INITIAL_WEBSITE_CONTENT);
+  const { isAdmin } = useAuth();
+
+  // Instant SWR caching: hydrate immediately from local cache or pre-warmed initial data in 0ms!
+  const [products, setProducts] = useState<Product[]>(() =>
+    loadCachedData<Product[]>(PRODUCTS_CACHE_KEY, INITIAL_PRODUCTS)
+  );
+  const [features, setFeatures] = useState<Feature[]>(() =>
+    loadCachedData<Feature[]>(FEATURES_CACHE_KEY, INITIAL_FEATURES)
+  );
+  const [faqs, setFaqs] = useState<FAQ[]>(() =>
+    loadCachedData<FAQ[]>(FAQS_CACHE_KEY, INITIAL_FAQS)
+  );
+  const [websiteContent, setWebsiteContent] = useState<WebsiteContent>(() =>
+    loadCachedData<WebsiteContent>(CONTENT_CACHE_KEY, INITIAL_WEBSITE_CONTENT)
+  );
   const [messages, setMessages] = useState<ContactMessage[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  // If we already have products loaded, loading is false instantly so the UI never blocks!
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const cached = localStorage.getItem(PRODUCTS_CACHE_KEY);
+    return !cached && INITIAL_PRODUCTS.length === 0;
+  });
   const [isSeeding, setIsSeeding] = useState<boolean>(false);
 
-  // Subscribe in real-time to Products
+  // Subscribe in real-time to Products with instant local cache + background sync
   useEffect(() => {
+    let isMounted = true;
     const unsub = onSnapshot(
       collection(db, 'products'),
       (snapshot) => {
+        if (!isMounted) return;
         if (!snapshot.empty) {
           const items: Product[] = [];
           snapshot.forEach((docSnap) => {
@@ -134,8 +183,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
           });
           setProducts(items);
+          saveCachedData(PRODUCTS_CACHE_KEY, items);
         } else {
           setProducts([]);
+          saveCachedData(PRODUCTS_CACHE_KEY, []);
         }
         setLoading(false);
       },
@@ -145,14 +196,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    return () => unsub();
+    return () => {
+      isMounted = false;
+      unsub();
+    };
   }, []);
 
   // Subscribe to Features
   useEffect(() => {
+    let isMounted = true;
     const unsub = onSnapshot(
       collection(db, 'features'),
       (snapshot) => {
+        if (!isMounted) return;
         if (!snapshot.empty) {
           const items: Feature[] = [];
           snapshot.forEach((docSnap) => {
@@ -167,6 +223,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
           items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
           setFeatures(items);
+          saveCachedData(FEATURES_CACHE_KEY, items);
         } else {
           setFeatures(INITIAL_FEATURES);
         }
@@ -176,14 +233,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    return () => unsub();
+    return () => {
+      isMounted = false;
+      unsub();
+    };
   }, []);
 
   // Subscribe to FAQs
   useEffect(() => {
+    let isMounted = true;
     const unsub = onSnapshot(
       collection(db, 'faqs'),
       (snapshot) => {
+        if (!isMounted) return;
         if (!snapshot.empty) {
           const items: FAQ[] = [];
           snapshot.forEach((docSnap) => {
@@ -197,6 +259,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
           items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
           setFaqs(items);
+          saveCachedData(FAQS_CACHE_KEY, items);
         } else {
           setFaqs(INITIAL_FAQS);
         }
@@ -206,14 +269,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    return () => unsub();
+    return () => {
+      isMounted = false;
+      unsub();
+    };
   }, []);
 
   // Subscribe to Website Content (Hero, About, Footer)
   useEffect(() => {
+    let isMounted = true;
     const unsub = onSnapshot(
       collection(db, 'website_content'),
       (snapshot) => {
+        if (!isMounted) return;
         if (!snapshot.empty) {
           const newContent = { ...INITIAL_WEBSITE_CONTENT };
           snapshot.forEach((docSnap) => {
@@ -243,6 +311,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
           });
           setWebsiteContent(newContent);
+          saveCachedData(CONTENT_CACHE_KEY, newContent);
         } else {
           setWebsiteContent(INITIAL_WEBSITE_CONTENT);
         }
@@ -252,11 +321,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    return () => unsub();
+    return () => {
+      isMounted = false;
+      unsub();
+    };
   }, []);
 
-  // Subscribe to Messages
+  // Subscribe to Messages only if the user is authenticated as Admin
   useEffect(() => {
+    if (!isAdmin) {
+      setMessages([]);
+      return;
+    }
+
     const unsub = onSnapshot(
       collection(db, 'messages'),
       (snapshot) => {
@@ -276,14 +353,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         items.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
         setMessages(items);
       },
-      (error) => {
-        // Only admins can read messages; suppress or handle error gracefully if visitor
-        console.warn('Messages listener restricted or unauthenticated');
+      () => {
+        // Suppress or handle warning gracefully
       }
     );
 
     return () => unsub();
-  }, []);
+  }, [isAdmin]);
 
   // Product CRUD
   const addProduct = async (product: Omit<Product, 'id'>): Promise<string> => {
@@ -313,10 +389,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         15000,
         'Saving product to Firestore'
       );
-      setProducts((prev) => [
-        { id: docRef.id, ...cleanProduct },
-        ...prev.filter((p) => p.id !== docRef.id),
-      ]);
+      setProducts((prev) => {
+        const updated = [{ id: docRef.id, ...cleanProduct }, ...prev.filter((p) => p.id !== docRef.id)];
+        saveCachedData(PRODUCTS_CACHE_KEY, updated);
+        return updated;
+      });
       return docRef.id;
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'products');
@@ -338,10 +415,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ...(product.badge !== undefined ? { badge: product.badge.trim() } : {}),
     });
 
-    // Instant optimistic update across all views and modals
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...sanitized } : p))
-    );
+    // Instant optimistic update across all views, modals, and local cache
+    setProducts((prev) => {
+      const updated = prev.map((p) => (p.id === id ? { ...p, ...sanitized } : p));
+      saveCachedData(PRODUCTS_CACHE_KEY, updated);
+      return updated;
+    });
 
     try {
       await withTimeout(
@@ -356,7 +435,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const deleteProduct = async (id: string): Promise<void> => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+    setProducts((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      saveCachedData(PRODUCTS_CACHE_KEY, updated);
+      return updated;
+    });
     try {
       await withTimeout(
         deleteDoc(doc(db, 'products', id)),
@@ -370,6 +453,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const clearAllProducts = async (): Promise<void> => {
+    setProducts([]);
+    saveCachedData(PRODUCTS_CACHE_KEY, []);
     try {
       for (const p of products) {
         await withTimeout(

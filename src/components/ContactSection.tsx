@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Send, CheckCircle2, MessageSquare, AlertCircle, Clock, MapPin } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
@@ -40,9 +41,15 @@ export const ContactSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16">
           {/* Left Column: Contact Information */}
-          <div className="lg:col-span-5 flex flex-col justify-between">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-5 flex flex-col justify-between"
+          >
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-amber-400 text-xs font-semibold mb-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-amber-400 text-xs font-semibold mb-4 shadow-sm shadow-amber-500/5">
                 <Mail className="w-3.5 h-3.5" />
                 <span>Direct Communication</span>
               </div>
@@ -56,7 +63,11 @@ export const ContactSection: React.FC = () => {
               </p>
 
               <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+                <motion.div
+                  whileHover={{ x: 5, borderColor: 'rgba(245, 158, 11, 0.4)' }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 shadow-sm"
+                >
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
@@ -69,9 +80,13 @@ export const ContactSection: React.FC = () => {
                       {websiteContent.footer.contactEmail || 'support@webcraftgoods.com'}
                     </a>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+                <motion.div
+                  whileHover={{ x: 5, borderColor: 'rgba(16, 185, 129, 0.4)' }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 shadow-sm"
+                >
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
                     <Clock className="w-5 h-5" />
                   </div>
@@ -79,7 +94,7 @@ export const ContactSection: React.FC = () => {
                     <div className="text-xs text-slate-400">Average Response Time</div>
                     <div className="text-sm font-semibold text-white">&lt; 2 hours during business days</div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -87,32 +102,50 @@ export const ContactSection: React.FC = () => {
               <span className="font-semibold text-amber-300 block mb-1">Looking for product custom tweaks?</span>
               Send us your Figma file or Notion workspace structure and our engineering team can provide tailor-made adjustments.
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Interactive Form Saved to Firestore */}
-          <div className="lg:col-span-7">
-            <div className="p-5 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl bg-slate-900/70 border border-slate-800 shadow-2xl backdrop-blur-md">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-7"
+          >
+            <div className="p-5 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl bg-slate-900/70 border border-slate-800 shadow-2xl backdrop-blur-md hover:border-slate-700/80 transition-colors">
               <h3 className="text-xl font-bold text-white font-heading mb-2">Send a Message</h3>
               <p className="text-xs text-slate-400 mb-6">
                 All submissions are securely written to our Firestore admin inbox in real-time.
               </p>
 
-              {submitted && (
-                <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-3 text-xs">
-                  <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
-                  <div>
-                    <div className="font-bold">Message sent successfully!</div>
-                    <div className="text-slate-400">Our team has received your note in Firestore and will reply shortly.</div>
-                  </div>
-                </div>
-              )}
+              <AnimatePresence>
+                {submitted && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-3 text-xs shadow-md"
+                  >
+                    <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+                    <div>
+                      <div className="font-bold">Message sent successfully!</div>
+                      <div className="text-slate-400">Our team has received your note in Firestore and will reply shortly.</div>
+                    </div>
+                  </motion.div>
+                )}
 
-              {errorMessage && (
-                <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-center gap-3 text-xs">
-                  <AlertCircle className="w-5 h-5 shrink-0 text-rose-400" />
-                  <div>{errorMessage}</div>
-                </div>
-              )}
+                {errorMessage && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-center gap-3 text-xs"
+                  >
+                    <AlertCircle className="w-5 h-5 shrink-0 text-rose-400" />
+                    <div>{errorMessage}</div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -176,11 +209,13 @@ export const ContactSection: React.FC = () => {
                   />
                 </div>
 
-                <button
+                <motion.button
                   id="submit-contact-form-btn"
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs tracking-wide shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 active:scale-95"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="shimmer-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs tracking-wide shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting ? (
                     'Sending Message...'
@@ -190,10 +225,10 @@ export const ContactSection: React.FC = () => {
                       <Send className="w-3.5 h-3.5" />
                     </>
                   )}
-                </button>
+                </motion.button>
               </form>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

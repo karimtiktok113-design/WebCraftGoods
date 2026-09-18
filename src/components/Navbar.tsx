@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Menu, X, ArrowUpRight, Shield, LogIn, LogOut, Package, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -70,13 +71,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             className="flex items-center gap-2 sm:gap-2.5 group focus:outline-none cursor-pointer shrink-0 min-w-0"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-300 p-[1px] shadow-md shadow-amber-500/20 shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-300 p-[1px] shadow-md shadow-amber-500/20 shrink-0 group-hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center group-hover:bg-slate-900 transition-colors">
                 <Package className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 group-hover:scale-110 transition-transform duration-200" />
               </div>
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-base sm:text-lg md:text-xl font-extrabold tracking-tight text-white font-heading whitespace-nowrap">
+              <span className="text-base sm:text-lg md:text-xl font-extrabold tracking-tight text-white font-heading whitespace-nowrap group-hover:text-amber-300 transition-colors">
                 WebCraft<span className="text-amber-400">Goods</span>
               </span>
               <span className="hidden sm:block text-[9px] md:text-[10px] uppercase tracking-wider text-slate-400 -mt-0.5 font-medium whitespace-nowrap">
@@ -108,11 +109,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Desktop Action Buttons */}
           <div className="hidden md:flex items-center gap-2 lg:gap-3 shrink-0">
             {/* Light / Dark Mode Toggle */}
-            <button
+            <motion.button
               id="navbar-theme-mode-toggle"
               onClick={toggleMode}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               title={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className="w-9 h-9 text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition-all active:scale-95 flex items-center justify-center group shrink-0"
+              className="w-9 h-9 text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition-all flex items-center justify-center group shrink-0 cursor-pointer"
               aria-label={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {mode === 'dark' ? (
@@ -120,12 +123,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               ) : (
                 <Moon className="w-4 h-4 text-slate-700 group-hover:-rotate-12 transition-transform duration-300" />
               )}
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               id="navbar-admin-btn"
               onClick={onOpenAdmin}
-              className={`flex items-center gap-1.5 lg:gap-2 px-3 lg:px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap shrink-0 ${
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex items-center gap-1.5 lg:gap-2 px-3 lg:px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap shrink-0 cursor-pointer ${
                 isAdmin
                   ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
                   : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:text-white hover:border-slate-700'
@@ -133,26 +138,30 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Shield className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>{isAdmin ? 'Admin Dashboard' : 'Admin CMS'}</span>
-            </button>
+            </motion.button>
 
-            <a
+            <motion.a
               id="navbar-explore-btn"
               href="#products"
-              className="inline-flex items-center justify-center gap-1.5 lg:gap-2 px-4 lg:px-5 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs tracking-wide shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 transition-all duration-200 active:scale-95 whitespace-nowrap shrink-0"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="shimmer-btn inline-flex items-center justify-center gap-1.5 lg:gap-2 px-4 lg:px-5 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs tracking-wide shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 transition-all duration-200 whitespace-nowrap shrink-0 cursor-pointer"
             >
               <span>Explore Products</span>
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
-            </a>
+            </motion.a>
 
             {isAdmin && (
-              <button
+              <motion.button
                 id="navbar-logout-btn"
                 onClick={logout}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 title="Sign out of Owner Admin"
-                className="p-2 text-slate-400 hover:text-rose-400 transition-colors rounded-lg hover:bg-slate-800 shrink-0"
+                className="p-2 text-slate-400 hover:text-rose-400 transition-colors rounded-lg hover:bg-slate-800 shrink-0 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
-              </button>
+              </motion.button>
             )}
           </div>
 
@@ -172,7 +181,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* Quick Admin button on mobile: compact icon or icon+text depending on width */}
+            {/* Quick Admin button on mobile */}
             <button
               id="mobile-admin-quick-btn"
               onClick={onOpenAdmin}
@@ -197,64 +206,72 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-950/98 backdrop-blur-2xl border-b border-slate-800 px-5 py-5 shadow-2xl transition-all fixed top-[57px] left-0 right-0 max-h-[calc(100vh-57px)] overflow-y-auto z-50">
-          <nav className="flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-base font-medium text-slate-200 hover:text-amber-400 hover:bg-slate-900/60 px-3 py-2.5 rounded-xl transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-            <div className="pt-3 mt-2 border-t border-slate-800/80 flex flex-col gap-2.5">
-              {/* Mobile Mode Switcher Row */}
-              <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-xs text-slate-300 font-medium">Appearance</span>
-                <button
-                  onClick={toggleMode}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-semibold text-slate-200 hover:text-white"
+      {/* Mobile Menu Dropdown with AnimatePresence */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden bg-slate-950/98 backdrop-blur-2xl border-b border-slate-800 px-5 py-5 shadow-2xl fixed top-[57px] left-0 right-0 max-h-[calc(100vh-57px)] overflow-y-auto z-50"
+          >
+            <nav className="flex flex-col gap-2">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base font-medium text-slate-200 hover:text-amber-400 hover:bg-slate-900/60 px-3 py-2.5 rounded-xl transition-colors"
                 >
-                  {mode === 'dark' ? (
-                    <>
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Switch to Light</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-3.5 h-3.5 text-slate-700" />
-                      <span>Switch to Dark</span>
-                    </>
-                  )}
-                </button>
-              </div>
+                  {link.label}
+                </a>
+              ))}
+              <div className="pt-3 mt-2 border-t border-slate-800/80 flex flex-col gap-2.5">
+                {/* Mobile Mode Switcher Row */}
+                <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900 border border-slate-800">
+                  <span className="text-xs text-slate-300 font-medium">Appearance</span>
+                  <button
+                    onClick={toggleMode}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-semibold text-slate-200 hover:text-white"
+                  >
+                    {mode === 'dark' ? (
+                      <>
+                        <Sun className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Switch to Light</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="w-3.5 h-3.5 text-slate-700" />
+                        <span>Switch to Dark</span>
+                      </>
+                    )}
+                  </button>
+                </div>
 
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAdmin();
-                }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-900 border border-amber-500/30 text-sm font-semibold text-amber-400 active:scale-[0.98] transition-transform"
-              >
-                <Shield className="w-4 h-4" />
-                <span>Admin CMS Panel</span>
-              </button>
-              <a
-                href="#products"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-sm font-bold shadow-md shadow-amber-500/20 active:scale-[0.98] transition-transform"
-              >
-                <span>Explore Products</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </a>
-            </div>
-          </nav>
-        </div>
-      )}
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAdmin();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-900 border border-amber-500/30 text-sm font-semibold text-amber-400 active:scale-[0.98] transition-transform"
+                >
+                  <Shield className="w-4 h-4" />
+                  <span>Admin CMS Panel</span>
+                </button>
+                <a
+                  href="#products"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="shimmer-btn w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-sm font-bold shadow-md shadow-amber-500/20 active:scale-[0.98] transition-transform"
+                >
+                  <span>Explore Products</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </a>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

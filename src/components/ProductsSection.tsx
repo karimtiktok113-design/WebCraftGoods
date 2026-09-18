@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Search, SlidersHorizontal, PackageOpen, Layers } from 'lucide-react';
 import { Product } from '../types';
 import { ProductCard } from './ProductCard';
@@ -55,9 +56,15 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-amber-400 text-xs font-semibold mb-4">
+        {/* Section Heading with motion viewport entrance */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center max-w-3xl mx-auto mb-10 sm:mb-14"
+        >
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-amber-400 text-xs font-semibold mb-4 shadow-sm shadow-amber-500/5">
             <Layers className="w-3.5 h-3.5" />
             <span>Digital Product Catalog</span>
           </div>
@@ -67,25 +74,27 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
           <p className="text-sm sm:text-base text-slate-400 font-light leading-relaxed">
             Every product is engineered with extreme attention to detail, lifetime updates, and commercial usage rights included.
           </p>
-        </div>
+        </motion.div>
 
         {/* Filters and Search Bar */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-8 sm:mb-10 pb-6 border-b border-slate-800/80">
           {/* Category Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
             {categories.map((cat) => (
-              <button
+              <motion.button
                 key={cat}
                 id={`cat-filter-${cat.toLowerCase().replace(/\s+/g, '-')}`}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 active:scale-95 whitespace-nowrap ${
+                className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 whitespace-nowrap cursor-pointer ${
                   selectedCategory === cat
                     ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold'
                     : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700'
                 }`}
               >
                 {cat}
-              </button>
+              </motion.button>
             ))}
           </div>
 
@@ -98,15 +107,15 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products or templates..."
-              className="w-full pl-10 pr-4 py-2.5 sm:py-2 rounded-xl bg-slate-900 border border-slate-800 focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/80 text-base sm:text-xs text-white placeholder-slate-500 outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-2 rounded-xl bg-slate-900 border border-slate-800 focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/80 text-base sm:text-xs text-white placeholder-slate-500 outline-none transition-all shadow-inner"
             />
           </div>
         </div>
 
-        {/* Loading State */}
-        {loading ? (
+        {/* Loading State - only shown if products are not yet available from cache */}
+        {loading && products.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
+            {[1, 2, 3].map((n) => (
               <div
                 key={n}
                 className="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 animate-pulse aspect-square flex flex-col justify-between"
@@ -118,14 +127,22 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
             ))}
           </div>
         ) : filteredProducts.length > 0 ? (
-          /* Products Grid with 1:1 Aspect Ratio Cards */
+          /* Products Grid with 1:1 Aspect Ratio Cards and Staggered Entry Animation */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredProducts.map((product) => (
-              <ProductCard
+            {filteredProducts.map((product, index) => (
+              <motion.div
                 key={product.id}
-                product={product}
-                onSelect={(p) => handleProductSelect(p)}
-              />
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.4), ease: [0.22, 1, 0.36, 1] }}
+                className="h-full flex flex-col"
+              >
+                <ProductCard
+                  product={product}
+                  onSelect={(p) => handleProductSelect(p)}
+                />
+              </motion.div>
             ))}
           </div>
         ) : (

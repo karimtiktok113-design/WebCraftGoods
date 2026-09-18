@@ -1,6 +1,83 @@
 import { Product, Feature, FAQ, WebsiteContent } from '../types';
 
-export const INITIAL_PRODUCTS: Product[] = [];
+export const INITIAL_PRODUCTS: Product[] = [
+  {
+    id: '3iQSzR00sBORClvyN3Om',
+    title: 'The Ultimate Notion Workspace OS',
+    shortDescription: 'All-in-one productivity architecture for founders, freelancers, and modern knowledge workers.',
+    description: `Transform your chaotic daily schedule into a serene, high-yield operating system. The Ultimate Notion Workspace OS incorporates second-brain principles, dynamic project management, automated recurring tasks, and an executive dashboard tailored for founders and busy knowledge workers.
+
+### Core System Architecture
+- **Executive Command Center:** Consolidate your daily focus, top 3 priorities, ongoing projects, and quick capture in one unified viewport.
+- **Project & Task Engine:** Kanban boards, timeline Gantt charts, and automated priority matrix tagging.
+- **Resource Knowledge Base:** Bookmark web clippings, code snippets, book notes, and meeting summaries effortlessly.
+- **Financial Health Tracker:** Keep tabs on recurring subscriptions, runway, and personal budgets.
+
+### What is Included
+1. Complete 1-Click Notion Template Duplicate Link
+2. 45-Minute In-depth Video Walkthrough & Setup Guide
+3. Lifetime Free Access to Future Workspace Schema Updates
+4. Commercial License for Internal Team Deployment`,
+    price: '$29',
+    originalPrice: '$49',
+    discountPercentage: 40,
+    isDiscounted: true,
+    category: 'Planners & OS',
+    badge: 'Best Seller',
+    images: [
+      'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=80',
+    ],
+    purchaseLink: 'https://gumroad.com',
+    features: [
+      'Full Notion 2.0+ Compatible',
+      'Lifetime Updates Included',
+      'Automated Priority Matrix',
+      'Commercial License',
+    ],
+    status: 'active',
+    createdAt: '2026-03-24',
+  },
+  {
+    id: 'reIB7pWuVqIaVhyg4xR2',
+    title: 'Financial Freedom & Wealth Tracker',
+    shortDescription: 'Institutional-grade financial forecasting and cash flow management for Google Sheets & Excel.',
+    description: `Take ruthless control of your financial destiny. Built from the ground up for individuals and bootstrapped entrepreneurs, the Financial Freedom & Wealth Tracker empowers you with institutional-grade forecasting, net worth trajectory simulation, and expense leak diagnostics.
+
+### Key Financial Modules
+- **Automated Cashflow Ledger:** Log income streams and categorize expenses with smart auto-tagging.
+- **Fire Calculator & Runway Simulator:** Project your exact financial independence date based on savings rate.
+- **Multi-Currency & Asset Allocation:** Track stocks, crypto, real estate equity, and cash reserves in real time.
+- **Interactive Visual Analytics:** Executive financial graphs, month-over-month burn rate comparisons, and annual summaries.
+
+### What is Included
+1. Google Sheets Template (1-Click Google Drive Copy)
+2. Microsoft Excel (.xlsx) Formatted Workbook
+3. Formula Audit & Customization Video Documentation
+4. Unlimited Lifetime Currency Updates & Revisions`,
+    price: '$39',
+    originalPrice: '$69',
+    discountPercentage: 43,
+    isDiscounted: true,
+    category: 'Sheets & Finance',
+    badge: 'Trending',
+    images: [
+      'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
+    ],
+    purchaseLink: 'https://gumroad.com',
+    features: [
+      'Google Sheets & Excel Ready',
+      'Interactive Financial Visuals',
+      'Automated Fire Calculator',
+      'Zero Formula Knowledge Required',
+    ],
+    status: 'active',
+    createdAt: '2026-03-24',
+  },
+];
 
 export const INITIAL_FEATURES: Feature[] = [
   {

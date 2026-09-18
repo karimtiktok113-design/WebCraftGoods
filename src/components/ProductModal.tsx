@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import {
   X,
   ChevronLeft,
@@ -83,25 +84,35 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
   };
 
   return (
-    <div
+    <motion.div
       id="product-modal-backdrop"
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto animate-fadeIn"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto"
     >
-      <div
+      <motion.div
         id="product-modal-container"
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl my-auto animate-scaleUp text-slate-100 max-h-[92vh] flex flex-col overflow-hidden"
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl my-auto text-slate-100 max-h-[92vh] flex flex-col overflow-hidden"
       >
         {/* Close Button */}
-        <button
+        <motion.button
           id="close-modal-btn"
           onClick={onClose}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
           aria-label="Close modal"
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-950/85 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700/80 transition-colors shadow-lg active:scale-95"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-950/85 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700/80 transition-colors shadow-lg cursor-pointer"
         >
           <X className="w-5 h-5" />
-        </button>
+        </motion.button>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-0 overflow-y-auto flex-1">
           {/* Left Column: 1:1 Square Image Gallery */}
@@ -256,28 +267,32 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
 
             {/* Actions Footer */}
             <div className="pt-3 sm:pt-4 border-t border-slate-800/80 flex items-center gap-2.5 sm:gap-3 mt-auto">
-              <button
+              <motion.button
                 id="modal-purchase-now-btn"
                 onClick={handlePurchase}
-                className="flex-1 inline-flex items-center justify-center gap-2 py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-amber-500/25 transition-all transform active:scale-95"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="shimmer-btn flex-1 inline-flex items-center justify-center gap-2 py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-amber-500/25 transition-all cursor-pointer"
               >
                 <ShoppingCart className="w-4 h-4" />
                 <span>Purchase & Download</span>
                 <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-0.5" />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
                 id="modal-share-btn"
                 onClick={handleShare}
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
                 title="Copy share link"
-                className="p-3 sm:p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 active:scale-95"
+                className="p-3 sm:p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

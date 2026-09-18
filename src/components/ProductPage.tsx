@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -319,21 +320,25 @@ export const ProductPage: React.FC<ProductPageProps> = ({
 
             {/* 3. PURCHASE BUTTON & SHARE */}
             <div className="pt-4 border-t border-slate-800/80 flex items-center gap-2.5 sm:gap-3">
-              <button
+              <motion.button
                 id="product-page-purchase-btn"
                 onClick={handlePurchase}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2.5 px-3.5 sm:px-6 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm md:text-base tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all transform active:scale-95 whitespace-nowrap min-w-0"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="shimmer-btn flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2.5 px-3.5 sm:px-6 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm md:text-base tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all whitespace-nowrap min-w-0 cursor-pointer"
               >
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-slate-950 shrink-0" />
                 <span className="whitespace-nowrap">Purchase Now</span>
                 <span className="opacity-80 font-black whitespace-nowrap tabular-nums">({product.price})</span>
                 <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
                 onClick={handleShare}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 title="Copy share link"
-                className="p-3 sm:p-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 active:scale-95 relative"
+                className="p-3 sm:p-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 relative cursor-pointer"
               >
                 {copied ? (
                   <Check className="w-5 h-5 text-emerald-400" />
@@ -345,7 +350,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
                     Link Copied!
                   </span>
                 )}
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>

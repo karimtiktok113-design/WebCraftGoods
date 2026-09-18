@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, Download, Star, TrendingUp } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
@@ -11,10 +12,22 @@ export const Hero: React.FC = () => {
       id="hero"
       className="relative min-h-0 sm:min-h-[90vh] flex items-center justify-center pt-24 sm:pt-28 pb-12 sm:pb-16 overflow-hidden bg-slate-950 w-full"
     >
-      {/* Dynamic Background Glows and Grids */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.15),rgba(255,255,255,0))] pointer-events-none" />
-      <div className="absolute top-1/4 -left-48 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block" />
-      <div className="absolute bottom-10 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block" />
+      {/* Dynamic Background Glows with gentle breathing animation */}
+      <motion.div
+        animate={{ opacity: [0.12, 0.22, 0.12], scale: [1, 1.08, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.18),rgba(255,255,255,0))] pointer-events-none"
+      />
+      <motion.div
+        animate={{ y: [0, -20, 0], x: [0, 15, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-1/4 -left-48 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block"
+      />
+      <motion.div
+        animate={{ y: [0, 25, 0], x: [0, -20, 0], scale: [1, 1.15, 1] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="absolute bottom-10 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block"
+      />
 
       {/* Subtle Grid pattern */}
       <div
@@ -29,71 +42,109 @@ export const Hero: React.FC = () => {
           {/* Left Column: Copy & CTAs */}
           <div className="lg:col-span-7 flex flex-col items-start text-left w-full">
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold tracking-wide mb-4 sm:mb-6 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <motion.div
+              initial={{ opacity: 0, y: -14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              whileHover={{ scale: 1.03 }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-semibold tracking-wide mb-4 sm:mb-6 backdrop-blur-md shadow-sm shadow-amber-500/10 cursor-default"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0 animate-pulse" />
               <span className="line-clamp-1">{hero.badgeText || 'Curated Software & Digital Marketplace'}</span>
-            </div>
+            </motion.div>
 
             {/* Headline */}
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-heading leading-[1.18] sm:leading-[1.1] mb-4 sm:mb-6">
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-heading leading-[1.18] sm:leading-[1.1] mb-4 sm:mb-6"
+            >
               {hero.heading}
-            </h1>
+            </motion.h1>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-lg lg:text-xl text-slate-300 sm:text-slate-400 leading-relaxed max-w-2xl mb-6 sm:mb-8 font-light">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="text-sm sm:text-lg lg:text-xl text-slate-300 sm:text-slate-400 leading-relaxed max-w-2xl mb-6 sm:mb-8 font-light"
+            >
               {hero.subtitle}
-            </p>
+            </motion.p>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-8 sm:mb-10 w-full sm:w-auto">
-              <a
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-8 sm:mb-10 w-full sm:w-auto"
+            >
+              <motion.a
                 id="hero-primary-cta"
                 href={hero.primaryButtonLink || '#products'}
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-xl shadow-amber-500/20 hover:shadow-amber-500/30 transition-all text-center w-full sm:w-auto active:scale-[0.98] whitespace-nowrap"
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="shimmer-btn inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all text-center w-full sm:w-auto whitespace-nowrap cursor-pointer group"
               >
                 <span>{hero.primaryButtonText || 'Explore Products'}</span>
-                <ArrowRight className="w-4 h-4 shrink-0" />
-              </a>
+                <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
+              </motion.a>
 
-              <a
+              <motion.a
                 id="hero-secondary-cta"
                 href={hero.secondaryButtonLink || '#features'}
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 text-slate-200 border border-slate-700/80 font-semibold text-xs sm:text-sm transition-all hover:border-slate-600 text-center w-full sm:w-auto active:scale-[0.98] whitespace-nowrap"
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 text-slate-200 border border-slate-700/80 font-semibold text-xs sm:text-sm transition-all hover:border-slate-600 text-center w-full sm:w-auto whitespace-nowrap cursor-pointer"
               >
                 <span>{hero.secondaryButtonText || 'Learn More'}</span>
-              </a>
-            </div>
+              </motion.a>
+            </motion.div>
 
             {/* Trust badges row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-6 pt-5 sm:pt-6 border-t border-slate-800/80 w-full max-w-lg">
-              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
-                <Download className="w-4 h-4 text-amber-400 shrink-0" />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-6 pt-5 sm:pt-6 border-t border-slate-800/80 w-full max-w-lg"
+            >
+              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap group">
+                <Download className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
                 <span>Instant Digital Access</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
-                <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap group">
+                <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
                 <span>Commercial License</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap">
-                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="flex items-center gap-2 text-xs text-slate-400 whitespace-nowrap group">
+                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
                 <span>Lifetime Updates</span>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Column: Premium Mockup Graphic & Floating Cards */}
-          <div className="lg:col-span-5 relative flex flex-col items-center justify-center w-full mt-4 lg:mt-0">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-5 relative flex flex-col items-center justify-center w-full mt-4 lg:mt-0"
+          >
             {/* Ambient Back Glow */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-orange-500/10 rounded-3xl blur-2xl transform rotate-3 scale-95 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-orange-500/10 rounded-3xl blur-2xl transform rotate-3 scale-95 pointer-events-none animate-pulse-glow" />
 
             {/* Main Showcase Card Container */}
-            <div className="relative w-full max-w-md bg-slate-900/90 border border-slate-800/90 rounded-2xl shadow-2xl p-3.5 sm:p-4 backdrop-blur-xl group hover:border-slate-700 transition-all duration-300">
+            <motion.div
+              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+              className="relative w-full max-w-md bg-slate-900/90 border border-slate-800/90 hover:border-amber-500/40 rounded-2xl shadow-2xl p-3.5 sm:p-4 backdrop-blur-xl group transition-all duration-300"
+            >
               {/* Card Header Bar */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3 px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-rose-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-rose-500/80 group-hover:scale-110 transition-transform" />
+                  <div className="w-3 h-3 rounded-full bg-amber-500/80 group-hover:scale-110 transition-transform delay-75" />
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/80 group-hover:scale-110 transition-transform delay-150" />
                 </div>
                 <div className="text-[11px] font-mono text-slate-400 tracking-wide bg-slate-950/60 px-2.5 py-0.5 rounded-md border border-slate-800">
                   webcraft-goods-v2.6
@@ -108,7 +159,7 @@ export const Hero: React.FC = () => {
                     'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1000&auto=format&fit=crop&q=80'
                   }
                   alt="WebCraft Goods Digital Showcase"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-700 ease-out"
                   referrerPolicy="no-referrer"
                 />
 
@@ -131,7 +182,7 @@ export const Hero: React.FC = () => {
               </div>
 
               {/* Floating Metric Card 1 (Top Right - Desktop) */}
-              <div className="absolute -top-5 -right-5 bg-slate-900/95 border border-slate-700/80 rounded-xl p-3 shadow-xl backdrop-blur-md hidden sm:flex items-center gap-3 animate-bounce-slow">
+              <div className="absolute -top-5 -right-5 bg-slate-900/95 border border-slate-700/80 rounded-xl p-3 shadow-xl backdrop-blur-md hidden sm:flex items-center gap-3 animate-float hover:scale-105 transition-transform duration-200">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                   <TrendingUp className="w-4 h-4" />
                 </div>
@@ -142,7 +193,7 @@ export const Hero: React.FC = () => {
               </div>
 
               {/* Floating Metric Card 2 (Bottom Left - Desktop) */}
-              <div className="absolute -bottom-5 -left-5 bg-slate-900/95 border border-slate-700/80 rounded-xl p-3 shadow-xl backdrop-blur-md hidden sm:flex items-center gap-3">
+              <div className="absolute -bottom-5 -left-5 bg-slate-900/95 border border-slate-700/80 rounded-xl p-3 shadow-xl backdrop-blur-md hidden sm:flex items-center gap-3 animate-float-delayed hover:scale-105 transition-transform duration-200">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 </div>
@@ -151,7 +202,7 @@ export const Hero: React.FC = () => {
                   <div className="text-xs font-bold text-amber-400 font-heading whitespace-nowrap tabular-nums">4.9 / 5.0 Rating</div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Mobile Metric Cards (Displayed cleanly below mockup on mobile) */}
             <div className="sm:hidden grid grid-cols-2 gap-2.5 mt-4 w-full max-w-md">
@@ -174,7 +225,7 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

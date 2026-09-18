@@ -1,12 +1,37 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import {
+  initializeFirestore,
+  getFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  doc,
+  getDocFromServer,
+  Firestore,
+} from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 
+// Initialize Firestore with Persistent IndexedDB Local Cache for instant sub-millisecond local reads
+let firestoreDb: Firestore;
+try {
+  firestoreDb = initializeFirestore(
+    app,
+    {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager(),
+      }),
+    },
+    firebaseConfig.firestoreDatabaseId
+  );
+} catch {
+  // Graceful fallback if already initialized or if IndexedDB is restricted
+  firestoreDb = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+}
+
 // CRITICAL: The app will break without specifying firestoreDatabaseId
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = firestoreDb;
 export const auth = getAuth(app);
 
 // Operation types per security guidelines
@@ -57,14 +82,28 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   return errInfo;
 }
 
-// Initial connection test as mandated by Firebase skill
-async function testConnection() {
-  try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn('Firebase client offline or connecting: Please verify internet connection.');
+// Non-blocking connection check so initial page render and product loading are never held back
+function testConnection() {
+  if (typeof window === 'undefined') return;
+
+  const runTest = async () => {
+    try {
+      await Promise.race([
+        getDocFromServer(doc(db, 'test', 'connection')),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),
+      ]);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('the client is offline')) {
+        console.warn('Firebase client offline or connecting: Operating in fast offline cache mode.');
+      }
     }
+  };
+
+  // Run in idle time or after the main thread finishes loading products
+  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(runTest, { timeout: 2000 });
+  } else {
+    setTimeout(runTest, 1200);
   }
 }
 

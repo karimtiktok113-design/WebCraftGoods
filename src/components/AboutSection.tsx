@@ -38,9 +38,9 @@ export const AboutSection: React.FC = () => {
             {/* Mission & Vision Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 w-full mb-6 sm:mb-8">
               <motion.div
-                whileHover={{ y: -4, borderColor: 'rgba(245, 158, 11, 0.4)' }}
+                whileHover={{ y: -4 }}
                 transition={{ duration: 0.2 }}
-                className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-sm"
+                className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/40 shadow-sm transition-colors"
               >
                 <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-3">
                   <Target className="w-4 h-4" />

@@ -13,6 +13,7 @@ interface ThemeContextType {
   effectiveTheme: PremiumThemeConfig;
   previewThemeId: PremiumThemeId | null;
   setPreviewThemeId: (id: PremiumThemeId | null) => void;
+  setThemeId: (id: PremiumThemeId) => void;
   activatePremiumTheme: (themeId: PremiumThemeId) => Promise<void>;
   updateStoreThemeSettings: (settings: Partial<StoreThemeSettings>) => Promise<void>;
   isSaving: boolean;
@@ -21,6 +22,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_MODE_KEY = 'webcraft_theme_mode';
+const LOCAL_STORAGE_THEME_KEY = 'webcraft_selected_theme_id';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { websiteContent, updateWebsiteContent } = useData();
@@ -42,15 +44,26 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return storeThemeSettings.defaultMode || 'dark';
   });
 
+  // Local visitor/admin theme selection
+  const [userThemeId, setUserThemeId] = useState<PremiumThemeId | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) as PremiumThemeId;
+      if (saved && PREMIUM_THEMES.some((t) => t.id === saved)) {
+        return saved;
+      }
+    }
+    return null;
+  });
+
   // Live admin temporary preview before saving
   const [previewThemeId, setPreviewThemeId] = useState<PremiumThemeId | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Active theme ID (from Firestore or default)
+  // Store-level active theme ID (from Firestore or default)
   const activeThemeId: PremiumThemeId = storeThemeSettings.activeThemeId || 'amber-gold';
 
-  // Effective theme currently visible (preview has precedence if active)
-  const effectiveThemeId = previewThemeId || activeThemeId;
+  // Effective theme currently visible (preview has highest precedence, then user selection, then store default)
+  const effectiveThemeId: PremiumThemeId = previewThemeId || userThemeId || activeThemeId;
   const effectiveTheme = useMemo(() => getThemeConfig(effectiveThemeId), [effectiveThemeId]);
   const activeTheme = useMemo(() => getThemeConfig(activeThemeId), [activeThemeId]);
 
@@ -86,7 +99,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     root.style.setProperty('--theme-primary-light', effectiveTheme.colors.primaryLight);
     root.style.setProperty('--theme-primary-rgb', effectiveTheme.colors.primaryRgb);
     root.style.setProperty('--theme-accent', effectiveTheme.colors.accent);
+    root.style.setProperty('--theme-accent-rgb', effectiveTheme.colors.accentRgb);
+    root.style.setProperty('--theme-gradient', effectiveTheme.colors.gradientCss);
     root.style.setProperty('--theme-glow', effectiveTheme.colors.glow);
+    root.style.setProperty('--theme-button-text', effectiveTheme.colors.contrastText);
+    root.style.setProperty('--theme-contrast-text', effectiveTheme.colors.contrastText);
   }, [mode, effectiveThemeId, effectiveTheme]);
 
   const setMode = (newMode: ThemeMode) => {
@@ -101,6 +118,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setMode(next);
   };
 
+  const setThemeId = (newThemeId: PremiumThemeId) => {
+    setUserThemeId(newThemeId);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(LOCAL_STORAGE_THEME_KEY, newThemeId);
+    }
+  };
+
   // Admin-only: Activate a premium theme globally across the store
   const activatePremiumTheme = async (themeId: PremiumThemeId): Promise<void> => {
     setIsSaving(true);
@@ -111,6 +135,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updatedAt: new Date().toISOString(),
       };
       await updateWebsiteContent('theme', updatedSettings);
+      setUserThemeId(themeId);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(LOCAL_STORAGE_THEME_KEY, themeId);
+      }
       setPreviewThemeId(null);
     } finally {
       setIsSaving(false);
@@ -144,6 +172,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         effectiveTheme,
         previewThemeId,
         setPreviewThemeId,
+        setThemeId,
         activatePremiumTheme,
         updateStoreThemeSettings,
         isSaving,

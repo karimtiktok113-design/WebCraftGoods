@@ -16,7 +16,10 @@ export const Hero: React.FC = () => {
       <motion.div
         animate={{ opacity: [0.12, 0.22, 0.12], scale: [1, 1.08, 1] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.18),rgba(255,255,255,0))] pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 80% 80% at 50% -20%, rgba(var(--theme-primary-rgb), 0.18), rgba(255,255,255,0))',
+        }}
       />
       <motion.div
         animate={{ y: [0, -20, 0], x: [0, 15, 0], scale: [1, 1.1, 1] }}
@@ -26,7 +29,8 @@ export const Hero: React.FC = () => {
       <motion.div
         animate={{ y: [0, 25, 0], x: [0, -20, 0], scale: [1, 1.15, 1] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="absolute bottom-10 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block"
+        className="absolute bottom-10 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none hidden sm:block"
+        style={{ backgroundColor: 'rgba(var(--theme-accent-rgb, var(--theme-primary-rgb)), 0.12)' }}
       />
 
       {/* Subtle Grid pattern */}
@@ -132,7 +136,12 @@ export const Hero: React.FC = () => {
             className="lg:col-span-5 relative flex flex-col items-center justify-center w-full mt-4 lg:mt-0"
           >
             {/* Ambient Back Glow */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-orange-500/10 rounded-3xl blur-2xl transform rotate-3 scale-95 pointer-events-none animate-pulse-glow" />
+            <div
+              className="absolute inset-0 rounded-3xl blur-2xl transform rotate-3 scale-95 pointer-events-none animate-pulse-glow"
+              style={{
+                background: 'linear-gradient(to top right, rgba(var(--theme-primary-rgb), 0.25), rgba(var(--theme-accent-rgb, var(--theme-primary-rgb)), 0.15))',
+              }}
+            />
 
             {/* Main Showcase Card Container */}
             <motion.div

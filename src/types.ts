@@ -58,21 +58,52 @@ export interface FooterLinkItem {
   id: string;
   label: string;
   href: string;
+  openInNewTab?: boolean;
+}
+
+export interface TrustBadgeItem {
+  id: string;
+  label: string;
+  icon?: string;
+  sublabel?: string;
 }
 
 export interface FooterContent {
+  // Brand & Identity
+  brandName?: string;
+  brandAccent?: string;
   brandDescription: string;
-  contactEmail: string;
-  copyrightText: string;
   badgeText?: string;
+  contactEmail: string;
+  showContactEmail?: boolean;
+  brandLogoUrl?: string;
+
+  // Newsletter Section
+  showNewsletter?: boolean;
+  newsletterTitle?: string;
+  newsletterSubtitle?: string;
+  newsletterButtonText?: string;
+  newsletterPlaceholder?: string;
+
+  // Navigation Columns
+  showColumn1?: boolean;
   column1Title?: string;
   column1Links?: FooterLinkItem[];
+
+  showColumn2?: boolean;
   column2Title?: string;
   column2Links?: FooterLinkItem[];
+
+  // Column 3 (Action / Support / Admin Portal)
+  showColumn3?: boolean;
   column3Title?: string;
   column3Text?: string;
   column3ButtonText?: string;
   column3ButtonHref?: string;
+  column3ActionType?: 'admin' | 'link' | 'contact' | 'none';
+
+  // Social Links
+  showSocialLinks?: boolean;
   socialLinks: {
     twitter?: string;
     github?: string;
@@ -81,7 +112,22 @@ export interface FooterContent {
     discord?: string;
     youtube?: string;
     instagram?: string;
+    telegram?: string;
+    threads?: string;
+    producthunt?: string;
   };
+
+  // Trust, Security & Payment
+  showTrustBadges?: boolean;
+  trustBadges?: TrustBadgeItem[];
+  showPaymentMethods?: boolean;
+
+  // Bottom Bar & Controls
+  copyrightText: string;
+  showThemeIndicator?: boolean;
+  showModeToggle?: boolean;
+  showBackToTop?: boolean;
+  legalLinks?: FooterLinkItem[];
 }
 
 export type ThemeMode = 'dark' | 'light';

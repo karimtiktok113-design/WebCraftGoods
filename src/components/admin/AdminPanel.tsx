@@ -24,12 +24,14 @@ import {
   MessageSquare,
   AlertCircle,
   Palette,
+  Columns,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { Product, Feature, FAQ } from '../../types';
 import { ProductEditorModal } from './ProductEditorModal';
 import { ThemeSettingsTab } from './ThemeSettingsTab';
+import { FooterSettingsTab } from './FooterSettingsTab';
 import { INITIAL_WEBSITE_CONTENT } from '../../lib/sampleData';
 import { compressImageFile } from '../../lib/imageUtils';
 
@@ -37,7 +39,7 @@ interface AdminPanelProps {
   onClose: () => void;
 }
 
-type AdminTab = 'overview' | 'products' | 'features' | 'faqs' | 'content' | 'theme' | 'messages';
+type AdminTab = 'overview' | 'products' | 'features' | 'faqs' | 'content' | 'footer' | 'theme' | 'messages';
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const { user, logout } = useAuth();
@@ -486,6 +488,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <Globe className="w-4 h-4" />
                 <span>Website Content</span>
               </div>
+            </button>
+
+            <button
+              onClick={() => setCurrentTab('footer')}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                currentTab === 'footer'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Columns className="w-4 h-4" />
+                <span>Footer & Legal CMS</span>
+              </div>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  currentTab === 'footer'
+                    ? 'bg-slate-950 text-amber-300'
+                    : 'bg-slate-800 text-slate-300'
+                }`}
+              >
+                Customizer
+              </span>
             </button>
 
             <button
@@ -1418,6 +1443,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 </form>
               </div>
 
+              {/* Footer Settings Banner & Quick Link */}
+              <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-900 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 text-amber-400 font-bold text-xs mb-1">
+                    <Columns className="w-4 h-4" />
+                    <span>Advanced Multi-Column Footer CMS Available</span>
+                  </div>
+                  <p className="text-xs text-slate-400 font-light">
+                    Looking for full control over newsletter subscriptions, trust badges, payment pills, custom column links, 10+ social platforms, and instant preset templates?
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab('footer')}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20 transition-all cursor-pointer shrink-0"
+                >
+                  Open Footer Customizer →
+                </button>
+              </div>
+
               {/* Footer Settings Form */}
               <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
                 <div className="flex items-center justify-between mb-4">
@@ -1654,6 +1699,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               )}
             </div>
           )}
+
+          {/* FOOTER & LEGAL CMS TAB */}
+          {currentTab === 'footer' && <FooterSettingsTab />}
 
           {/* THEME & BRANDING TAB */}
           {currentTab === 'theme' && <ThemeSettingsTab />}

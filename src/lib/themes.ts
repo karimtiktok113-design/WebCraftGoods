@@ -1,5 +1,7 @@
 import { PremiumThemeId, StoreThemeSettings, ThemeMode } from '../types';
 
+export type { PremiumThemeId, StoreThemeSettings, ThemeMode };
+
 export interface PremiumThemeConfig {
   id: PremiumThemeId;
   name: string;
@@ -13,8 +15,11 @@ export interface PremiumThemeConfig {
     primaryLight: string;
     primaryRgb: string;
     accent: string;
+    accentRgb: string;
     gradient: string;
+    gradientCss: string;
     glow: string;
+    contrastText: string;
     swatches: [string, string, string, string]; // [primary, accent, light, darkSurface]
   };
 }
@@ -39,8 +44,11 @@ export const PREMIUM_THEMES: PremiumThemeConfig[] = [
       primaryLight: '#fef3c7',
       primaryRgb: '245, 158, 11',
       accent: '#f97316',
+      accentRgb: '249, 115, 22',
       gradient: 'from-amber-500 via-amber-400 to-amber-600',
-      glow: 'rgba(245, 158, 11, 0.25)',
+      gradientCss: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%)',
+      glow: 'rgba(245, 158, 11, 0.28)',
+      contrastText: '#090d16',
       swatches: ['#f59e0b', '#f97316', '#fef3c7', '#0f172a'],
     },
   },
@@ -57,8 +65,11 @@ export const PREMIUM_THEMES: PremiumThemeConfig[] = [
       primaryLight: '#d1fae5',
       primaryRgb: '16, 185, 129',
       accent: '#14b8a6',
+      accentRgb: '20, 184, 166',
       gradient: 'from-emerald-500 via-teal-400 to-emerald-600',
-      glow: 'rgba(16, 185, 129, 0.25)',
+      gradientCss: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%)',
+      glow: 'rgba(16, 185, 129, 0.28)',
+      contrastText: '#041c14',
       swatches: ['#10b981', '#14b8a6', '#d1fae5', '#064e3b'],
     },
   },
@@ -75,8 +86,11 @@ export const PREMIUM_THEMES: PremiumThemeConfig[] = [
       primaryLight: '#dbeafe',
       primaryRgb: '59, 130, 246',
       accent: '#6366f1',
+      accentRgb: '99, 102, 241',
       gradient: 'from-blue-500 via-indigo-500 to-blue-600',
-      glow: 'rgba(59, 130, 246, 0.25)',
+      gradientCss: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #2563eb 100%)',
+      glow: 'rgba(59, 130, 246, 0.28)',
+      contrastText: '#ffffff',
       swatches: ['#3b82f6', '#6366f1', '#dbeafe', '#1e1b4b'],
     },
   },
@@ -93,8 +107,11 @@ export const PREMIUM_THEMES: PremiumThemeConfig[] = [
       primaryLight: '#ede9fe',
       primaryRgb: '139, 92, 246',
       accent: '#ec4899',
+      accentRgb: '236, 72, 153',
       gradient: 'from-purple-500 via-violet-400 to-fuchsia-600',
-      glow: 'rgba(139, 92, 246, 0.25)',
+      gradientCss: 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 50%, #7c3aed 100%)',
+      glow: 'rgba(139, 92, 246, 0.28)',
+      contrastText: '#ffffff',
       swatches: ['#8b5cf6', '#ec4899', '#ede9fe', '#2e1065'],
     },
   },
@@ -111,8 +128,11 @@ export const PREMIUM_THEMES: PremiumThemeConfig[] = [
       primaryLight: '#ffe4e6',
       primaryRgb: '244, 63, 94',
       accent: '#fb7185',
+      accentRgb: '251, 113, 133',
       gradient: 'from-rose-500 via-rose-400 to-pink-600',
-      glow: 'rgba(244, 63, 94, 0.25)',
+      gradientCss: 'linear-gradient(135deg, #f43f5e 0%, #fb7185 50%, #e11d48 100%)',
+      glow: 'rgba(244, 63, 94, 0.28)',
+      contrastText: '#ffffff',
       swatches: ['#f43f5e', '#fb7185', '#ffe4e6', '#4c0519'],
     },
   },
@@ -129,8 +149,11 @@ export const PREMIUM_THEMES: PremiumThemeConfig[] = [
       primaryLight: '#cffafe',
       primaryRgb: '6, 182, 212',
       accent: '#10b981',
+      accentRgb: '16, 185, 129',
       gradient: 'from-cyan-400 via-teal-400 to-blue-500',
-      glow: 'rgba(6, 182, 212, 0.3)',
+      gradientCss: 'linear-gradient(135deg, #06b6d4 0%, #22d3ee 50%, #0d9488 100%)',
+      glow: 'rgba(6, 182, 212, 0.32)',
+      contrastText: '#041c24',
       swatches: ['#06b6d4', '#10b981', '#cffafe', '#083344'],
     },
   },
@@ -147,8 +170,11 @@ export const PREMIUM_THEMES: PremiumThemeConfig[] = [
       primaryLight: '#f1f5f9',
       primaryRgb: '148, 163, 184',
       accent: '#cbd5e1',
+      accentRgb: '203, 213, 225',
       gradient: 'from-slate-300 via-slate-100 to-slate-400',
-      glow: 'rgba(148, 163, 184, 0.2)',
+      gradientCss: 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 50%, #64748b 100%)',
+      glow: 'rgba(148, 163, 184, 0.22)',
+      contrastText: '#0f172a',
       swatches: ['#94a3b8', '#e2e8f0', '#f8fafc', '#0f172a'],
     },
   },

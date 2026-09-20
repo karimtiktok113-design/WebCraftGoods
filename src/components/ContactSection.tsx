@@ -64,9 +64,9 @@ export const ContactSection: React.FC = () => {
 
               <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <motion.div
-                  whileHover={{ x: 5, borderColor: 'rgba(245, 158, 11, 0.4)' }}
+                  whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 shadow-sm"
+                  className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-amber-500/40 shadow-sm transition-colors"
                 >
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5" />

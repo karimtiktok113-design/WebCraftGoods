@@ -41,10 +41,10 @@ export const FeaturesSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         {/* Section Heading */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="text-center max-w-3xl mx-auto mb-10 sm:mb-16"
         >
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-amber-400 text-xs font-semibold mb-4 shadow-sm shadow-amber-500/5">
@@ -67,12 +67,12 @@ export const FeaturesSection: React.FC = () => {
               <motion.div
                 key={feature.id}
                 id={`feature-card-${feature.id}`}
-                initial={{ opacity: 0, y: 28 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.4), ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.25), ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -6, transition: { duration: 0.22 } }}
-                className="group p-5 sm:p-8 rounded-2xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 hover:border-amber-500/40 transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-amber-500/10 cursor-default flex flex-col justify-between"
+                className="group p-5 sm:p-8 rounded-2xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 hover:border-amber-500/40 transition-[background-color,border-color,box-shadow] duration-300 transform-gpu shadow-md hover:shadow-xl hover:shadow-amber-500/10 cursor-default flex flex-col justify-between"
               >
                 <div>
                   <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-5 sm:mb-6 group-hover:scale-110 group-hover:bg-amber-500/20 group-hover:border-amber-500/40 transition-all duration-300 shadow-sm shadow-amber-500/10">

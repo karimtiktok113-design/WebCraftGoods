@@ -1,8 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark theme-amber-gold">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        try {
+          var mode = localStorage.getItem('webcraft_theme_mode') || 'dark';
+          var theme = localStorage.getItem('webcraft_selected_theme_id') || 'amber-gold';
+          var docEl = document.documentElement;
+          docEl.classList.remove('light', 'dark');
+          docEl.classList.add(mode);
+          docEl.classList.add('theme-' + theme);
+        } catch (_) {}
+      })();
+    </script>
     <script>
       (function() {
         try {

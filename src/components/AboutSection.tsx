@@ -16,10 +16,10 @@ export const AboutSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left Column: Brand Story & Mission/Vision */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-7 flex flex-col items-start w-full"
           >
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-amber-400 text-xs font-semibold mb-4 shadow-sm shadow-amber-500/5">
@@ -90,13 +90,13 @@ export const AboutSection: React.FC = () => {
 
           {/* Right Column: Visual Craft Photo Showcase */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.98, y: 16 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-5 relative w-full mt-4 lg:mt-0"
           >
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 shadow-2xl group hover:border-amber-500/30 transition-all duration-300">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 shadow-2xl group hover:border-amber-500/30 transition-colors duration-300">
               <img
                 src={
                   about.brandImage ||

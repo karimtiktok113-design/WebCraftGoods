@@ -14,22 +14,22 @@ export const Hero: React.FC = () => {
     >
       {/* Dynamic Background Glows with gentle breathing animation */}
       <motion.div
-        animate={{ opacity: [0.12, 0.22, 0.12], scale: [1, 1.08, 1] }}
+        animate={{ opacity: [0.12, 0.22, 0.12] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none transform-gpu"
         style={{
           background: 'radial-gradient(ellipse 80% 80% at 50% -20%, rgba(var(--theme-primary-rgb), 0.18), rgba(255,255,255,0))',
         }}
       />
       <motion.div
-        animate={{ y: [0, -20, 0], x: [0, 15, 0], scale: [1, 1.1, 1] }}
+        animate={{ y: [0, -15, 0], x: [0, 10, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-1/4 -left-48 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block"
+        className="absolute top-1/4 -left-48 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block transform-gpu will-change-transform"
       />
       <motion.div
-        animate={{ y: [0, 25, 0], x: [0, -20, 0], scale: [1, 1.15, 1] }}
+        animate={{ y: [0, 20, 0], x: [0, -15, 0] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="absolute bottom-10 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none hidden sm:block"
+        className="absolute bottom-10 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none hidden sm:block transform-gpu will-change-transform"
         style={{ backgroundColor: 'rgba(var(--theme-accent-rgb, var(--theme-primary-rgb)), 0.12)' }}
       />
 
@@ -89,7 +89,7 @@ export const Hero: React.FC = () => {
                 href={hero.primaryButtonLink || '#products'}
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
-                className="shimmer-btn inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all text-center w-full sm:w-auto whitespace-nowrap cursor-pointer group"
+                className="shimmer-btn inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-[background-color,box-shadow,opacity] duration-200 text-center w-full sm:w-auto whitespace-nowrap cursor-pointer group"
               >
                 <span>{hero.primaryButtonText || 'Explore Products'}</span>
                 <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
@@ -100,7 +100,7 @@ export const Hero: React.FC = () => {
                 href={hero.secondaryButtonLink || '#features'}
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 text-slate-200 border border-slate-700/80 font-semibold text-xs sm:text-sm transition-all hover:border-slate-600 text-center w-full sm:w-auto whitespace-nowrap cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 text-slate-200 border border-slate-700/80 font-semibold text-xs sm:text-sm transition-colors hover:border-slate-600 text-center w-full sm:w-auto whitespace-nowrap cursor-pointer"
               >
                 <span>{hero.secondaryButtonText || 'Learn More'}</span>
               </motion.a>
@@ -137,7 +137,7 @@ export const Hero: React.FC = () => {
           >
             {/* Ambient Back Glow */}
             <div
-              className="absolute inset-0 rounded-3xl blur-2xl transform rotate-3 scale-95 pointer-events-none animate-pulse-glow"
+              className="absolute inset-0 rounded-3xl blur-2xl transform rotate-3 scale-95 pointer-events-none animate-pulse-glow transform-gpu"
               style={{
                 background: 'linear-gradient(to top right, rgba(var(--theme-primary-rgb), 0.25), rgba(var(--theme-accent-rgb, var(--theme-primary-rgb)), 0.15))',
               }}
@@ -146,7 +146,7 @@ export const Hero: React.FC = () => {
             {/* Main Showcase Card Container */}
             <motion.div
               whileHover={{ y: -6, transition: { duration: 0.3 } }}
-              className="relative w-full max-w-md bg-slate-900/90 border border-slate-800/90 hover:border-amber-500/40 rounded-2xl shadow-2xl p-3.5 sm:p-4 backdrop-blur-xl group transition-all duration-300"
+              className="relative w-full max-w-md bg-slate-900/90 border border-slate-800/90 hover:border-amber-500/40 rounded-2xl shadow-2xl p-3.5 sm:p-4 backdrop-blur-xl group transition-[background-color,border-color,box-shadow] duration-300 transform-gpu"
             >
               {/* Card Header Bar */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3 px-1">

@@ -185,8 +185,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProducts(items);
           saveCachedData(PRODUCTS_CACHE_KEY, items);
         } else {
-          setProducts([]);
-          saveCachedData(PRODUCTS_CACHE_KEY, []);
+          // If snapshot is empty, preserve cached products or fallback gracefully to prevent empty flash
+          const cached = loadCachedData<Product[]>(PRODUCTS_CACHE_KEY, INITIAL_PRODUCTS);
+          setProducts(cached.length > 0 ? cached : INITIAL_PRODUCTS);
         }
         setLoading(false);
       },

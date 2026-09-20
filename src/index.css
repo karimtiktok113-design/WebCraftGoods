@@ -15,7 +15,7 @@
     -webkit-text-size-adjust: 100%;
     overflow-x: hidden;
     width: 100%;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -26,7 +26,6 @@
     width: 100%;
     min-width: 320px;
     position: relative;
-    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   #root {
@@ -540,14 +539,23 @@ html.light ::-webkit-scrollbar-thumb:hover {
 
 .animate-float {
   animation: float 5s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .animate-float-delayed {
   animation: float-delayed 6s ease-in-out infinite 1s;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .animate-pulse-glow {
   animation: pulse-glow 7s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .shimmer-btn {

@@ -133,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
                 title={`Active Theme: ${effectiveTheme.name} (Click to change)`}
-                className="h-9 px-2.5 sm:px-3 text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition-all flex items-center gap-2 group shrink-0 cursor-pointer"
+                className="h-9 px-2.5 sm:px-3 text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition-colors flex items-center gap-2 group shrink-0 cursor-pointer"
                 aria-label="Select Theme"
               >
                 <div
@@ -227,7 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               title={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className="w-9 h-9 text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition-all flex items-center justify-center group shrink-0 cursor-pointer"
+              className="w-9 h-9 text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition-colors flex items-center justify-center group shrink-0 cursor-pointer"
               aria-label={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {mode === 'dark' ? (
@@ -242,7 +242,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onOpenAdmin}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className={`flex items-center gap-1.5 lg:gap-2 px-3 lg:px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 border whitespace-nowrap shrink-0 cursor-pointer ${
+              className={`flex items-center gap-1.5 lg:gap-2 px-3 lg:px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors duration-200 border whitespace-nowrap shrink-0 cursor-pointer ${
                 isAdmin
                   ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
                   : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:text-white hover:border-slate-700'
@@ -257,7 +257,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               href="#products"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="shimmer-btn inline-flex items-center justify-center gap-1.5 lg:gap-2 px-4 lg:px-5 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs tracking-wide shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 transition-all duration-200 whitespace-nowrap shrink-0 cursor-pointer"
+              className="shimmer-btn inline-flex items-center justify-center gap-1.5 lg:gap-2 px-4 lg:px-5 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs tracking-wide shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 transition-[background-color,box-shadow] duration-200 whitespace-nowrap shrink-0 cursor-pointer"
             >
               <span>Explore Products</span>
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />

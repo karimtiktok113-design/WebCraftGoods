@@ -70,7 +70,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ y: -8, transition: { duration: 0.25, ease: 'easeOut' } }}
-      className="group relative flex flex-col bg-slate-900/70 hover:bg-slate-900 border border-slate-800/80 hover:border-amber-500/40 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-amber-500/15 transition-all duration-300 cursor-pointer"
+      className="group relative flex flex-col bg-slate-900/70 hover:bg-slate-900 border border-slate-800/80 hover:border-amber-500/40 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-amber-500/15 transition-[background-color,border-color,box-shadow] duration-300 transform-gpu cursor-pointer"
     >
       {/* 1:1 Aspect Ratio Square Image Area / Carousel */}
       <div
@@ -81,7 +81,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         {/* Images Track */}
         <div className="w-full h-full relative">
           <img
-            key={images[currentImageIndex] || images[0]}
             src={images[currentImageIndex] || images[0]}
             alt={`${product.title} view ${currentImageIndex + 1}`}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ease-out ${
@@ -235,7 +234,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.96 }}
             onClick={handlePurchaseClick}
-            className="shimmer-btn flex items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] sm:text-xs font-bold transition-all shadow-sm shadow-amber-500/20 whitespace-nowrap cursor-pointer"
+            className="shimmer-btn flex items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] sm:text-xs font-bold transition-[background-color,box-shadow] shadow-sm shadow-amber-500/20 whitespace-nowrap cursor-pointer"
           >
             <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
             <span className="whitespace-nowrap">Purchase</span>

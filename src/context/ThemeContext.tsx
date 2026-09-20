@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useLayoutEffect, useState, useMemo } from 'react';
 import { ThemeMode, PremiumThemeId, StoreThemeSettings } from '../types';
 import { PREMIUM_THEMES, DEFAULT_THEME_SETTINGS, getThemeConfig, PremiumThemeConfig } from '../lib/themes';
 import { useData } from './DataContext';
+
+// Safe layout effect that runs synchronously before browser paint
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 interface ThemeContextType {
   mode: ThemeMode;
@@ -67,31 +70,36 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const effectiveTheme = useMemo(() => getThemeConfig(effectiveThemeId), [effectiveThemeId]);
   const activeTheme = useMemo(() => getThemeConfig(activeThemeId), [activeThemeId]);
 
-  // Apply Mode & Theme classes and CSS variables to document
-  useEffect(() => {
+  // Apply Mode & Theme classes and CSS variables to document synchronously before paint
+  useIsomorphicLayoutEffect(() => {
     const root = document.documentElement;
     const body = document.body;
 
-    // 1. Set Light / Dark Mode class
+    // 1. Set Light / Dark Mode class idempotently
     if (mode === 'light') {
-      root.classList.remove('dark');
-      root.classList.add('light');
-      body.classList.remove('dark');
-      body.classList.add('light');
+      if (root.classList.contains('dark')) root.classList.remove('dark');
+      if (!root.classList.contains('light')) root.classList.add('light');
+      if (body.classList.contains('dark')) body.classList.remove('dark');
+      if (!body.classList.contains('light')) body.classList.add('light');
     } else {
-      root.classList.remove('light');
-      root.classList.add('dark');
-      body.classList.remove('light');
-      body.classList.add('dark');
+      if (root.classList.contains('light')) root.classList.remove('light');
+      if (!root.classList.contains('dark')) root.classList.add('dark');
+      if (body.classList.contains('light')) body.classList.remove('light');
+      if (!body.classList.contains('dark')) body.classList.add('dark');
     }
 
-    // 2. Clear old theme classes and attach current theme class
-    PREMIUM_THEMES.forEach((t) => {
-      root.classList.remove(`theme-${t.id}`);
-      body.classList.remove(`theme-${t.id}`);
-    });
-    root.classList.add(`theme-${effectiveThemeId}`);
-    body.classList.add(`theme-${effectiveThemeId}`);
+    // 2. Set current theme class only if not already set, preserving smooth rendering
+    const targetThemeClass = `theme-${effectiveThemeId}`;
+    if (!root.classList.contains(targetThemeClass)) {
+      PREMIUM_THEMES.forEach((t) => {
+        if (t.id !== effectiveThemeId) {
+          root.classList.remove(`theme-${t.id}`);
+          body.classList.remove(`theme-${t.id}`);
+        }
+      });
+      root.classList.add(targetThemeClass);
+      body.classList.add(targetThemeClass);
+    }
 
     // 3. Inject dynamic CSS Custom Properties for instant 100% reactive theme shifts
     root.style.setProperty('--theme-primary', effectiveTheme.colors.primary);

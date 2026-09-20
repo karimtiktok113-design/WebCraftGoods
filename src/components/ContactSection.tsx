@@ -215,7 +215,7 @@ export const ContactSection: React.FC = () => {
                   disabled={isSubmitting}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="shimmer-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs tracking-wide shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
+                  className="shimmer-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs tracking-wide shadow-lg shadow-amber-500/20 transition-[background-color,box-shadow] disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting ? (
                     'Sending Message...'

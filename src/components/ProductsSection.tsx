@@ -58,10 +58,10 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         {/* Section Heading with motion viewport entrance */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="text-center max-w-3xl mx-auto mb-10 sm:mb-14"
         >
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-amber-400 text-xs font-semibold mb-4 shadow-sm shadow-amber-500/5">
@@ -132,10 +132,10 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, y: 25 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.4), ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.25), ease: [0.22, 1, 0.36, 1] }}
                 className="h-full flex flex-col"
               >
                 <ProductCard

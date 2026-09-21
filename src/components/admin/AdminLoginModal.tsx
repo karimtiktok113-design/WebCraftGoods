@@ -87,13 +87,15 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
         {/* Strict Password Protected Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label htmlFor="owner-email-input" className="block text-xs font-semibold text-slate-300 mb-1.5">
               Owner Email / ID
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 id="owner-email-input"
+                name="username"
+                autoComplete="username"
                 type="text"
                 required
                 value={identity}
@@ -105,13 +107,15 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label htmlFor="owner-password-input" className="block text-xs font-semibold text-slate-300 mb-1.5">
               Owner Password
             </label>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 id="owner-password-input"
+                name="password"
+                autoComplete="current-password"
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}

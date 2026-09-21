@@ -15,33 +15,8 @@
         } catch (_) {}
       })();
     </script>
-    <script>
-      (function() {
-        try {
-          var _nativeFetch = typeof window !== 'undefined' && window.fetch ? window.fetch.bind(window) : undefined;
-          var _currentFetch = _nativeFetch;
-          var descriptor = {
-            get: function() {
-              return _currentFetch;
-            },
-            set: function(fn) {
-              _currentFetch = fn;
-            },
-            configurable: true,
-            enumerable: true
-          };
-          try {
-            Object.defineProperty(window, 'fetch', descriptor);
-          } catch (_) {}
-          if (typeof Window !== 'undefined' && Window.prototype) {
-            try {
-              Object.defineProperty(Window.prototype, 'fetch', descriptor);
-            } catch (_) {}
-          }
-        } catch (_) {}
-      })();
-    </script>
     <title>WebCraft Goods - Premium Digital Products & Software Showcase</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/%3E%3C/svg%3E" />
     <meta name="description" content="Premium digital products marketplace and software showcase with Firebase Admin CMS." />
     <meta property="og:title" content="WebCraft Goods - Premium Digital Products & Software Showcase" />
     <meta property="og:description" content="Premium digital products marketplace and software showcase with Firebase Admin CMS." />

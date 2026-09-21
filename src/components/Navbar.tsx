@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Menu, X, ArrowUpRight, Shield, LogIn, LogOut, Package, Sun, Moon, Palette, Check } from 'lucide-react';
+import { Sparkles, Menu, X, ArrowUpRight, Shield, LogIn, LogOut, Package, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { PREMIUM_THEMES } from '../lib/themes';
-import { PremiumThemeId } from '../types';
 
 interface NavbarProps {
   onOpenAdmin: () => void;
@@ -19,11 +17,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
-  const themeDropdownRef = useRef<HTMLDivElement>(null);
 
   const { user, isAdmin, logout } = useAuth();
-  const { mode, toggleMode, effectiveThemeId, effectiveTheme, setThemeId, activatePremiumTheme, isSaving } = useTheme();
+  const { mode, toggleMode } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,18 +28,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (themeDropdownRef.current && !themeDropdownRef.current.contains(e.target as Node)) {
-        setThemeDropdownOpen(false);
-      }
-    };
-    if (themeDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [themeDropdownOpen]);
 
   const navLinks = [
     { label: 'Home', href: '#hero' },
@@ -125,101 +109,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Desktop Action Buttons */}
           <div className="hidden md:flex items-center gap-2 lg:gap-3 shrink-0">
-            {/* Theme Selector Popover */}
-            <div className="relative" ref={themeDropdownRef}>
-              <motion.button
-                id="navbar-theme-selector-btn"
-                onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                title={`Active Theme: ${effectiveTheme.name} (Click to change)`}
-                className="h-9 px-2.5 sm:px-3 text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 hover:border-slate-700 transition-colors flex items-center gap-2 group shrink-0 cursor-pointer"
-                aria-label="Select Theme"
-              >
-                <div
-                  className="w-3.5 h-3.5 rounded-full shadow-sm transition-transform duration-200 group-hover:scale-110"
-                  style={{ backgroundColor: effectiveTheme.colors.primary }}
-                />
-                <span className="text-xs font-semibold hidden xl:inline">{effectiveTheme.name}</span>
-                <Palette className="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-colors" />
-              </motion.button>
-
-              {/* Theme Dropdown Menu */}
-              <AnimatePresence>
-                {themeDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-72 p-2 rounded-2xl bg-slate-950/95 border border-slate-800 shadow-2xl backdrop-blur-2xl z-50 text-left"
-                  >
-                    <div className="px-3 py-2 border-b border-slate-800/80 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Palette className="w-4 h-4 text-amber-400" />
-                        <span className="text-xs font-bold text-white uppercase tracking-wider">Select Theme</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-mono">Live Reactive</span>
-                    </div>
-
-                    <div className="py-1.5 space-y-1 max-h-80 overflow-y-auto">
-                      {PREMIUM_THEMES.map((theme) => {
-                        const isCurrent = effectiveThemeId === theme.id;
-                        return (
-                          <button
-                            key={theme.id}
-                            id={`theme-select-item-${theme.id}`}
-                            onClick={() => {
-                              setThemeId(theme.id);
-                              setThemeDropdownOpen(false);
-                            }}
-                            className={`w-full flex items-center justify-between p-2 rounded-xl transition-all text-left group cursor-pointer ${
-                              isCurrent
-                                ? 'bg-slate-900 border border-slate-700 shadow-sm'
-                                : 'hover:bg-slate-900/70 border border-transparent'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div
-                                className="w-4 h-4 rounded-full shrink-0 shadow-sm border border-white/10 flex items-center justify-center"
-                                style={{ backgroundColor: theme.colors.primary }}
-                              />
-                              <div className="min-w-0">
-                                <div className="text-xs font-semibold text-white group-hover:text-amber-300 transition-colors truncate">
-                                  {theme.name}
-                                </div>
-                                <div className="text-[10px] text-slate-400 truncate">{theme.tagline}</div>
-                              </div>
-                            </div>
-
-                            {isCurrent && (
-                              <div className="shrink-0 p-1 rounded-md bg-slate-800 text-amber-400">
-                                <Check className="w-3.5 h-3.5" />
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {isAdmin && (
-                      <div className="pt-2 mt-1 border-t border-slate-800/80">
-                        <button
-                          onClick={() => {
-                            setThemeDropdownOpen(false);
-                            onOpenAdmin();
-                          }}
-                          className="w-full py-1.5 px-2 text-center text-[11px] font-semibold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg transition-colors"
-                        >
-                          Manage Global Store Themes &rarr;
-                        </button>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
             {/* Light / Dark Mode Toggle */}
             <motion.button
               id="navbar-theme-mode-toggle"
@@ -279,23 +168,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Mobile Right Controls - strictly single line, zero overlapping */}
           <div className="flex md:hidden items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Quick Mobile Theme Indicator Dot Button */}
-            <button
-              id="mobile-theme-quick-btn"
-              onClick={() => setMobileMenuOpen(true)}
-              title={`Theme: ${effectiveTheme.name}`}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-800 bg-slate-900/80 active:scale-95 shrink-0"
-              aria-label="Theme selection"
-            >
-              <div
-                className="w-3.5 h-3.5 rounded-full shadow-sm"
-                style={{ backgroundColor: effectiveTheme.colors.primary }}
-              />
-            </button>
-
             {/* Quick Mobile Light / Dark Toggle */}
             <button
               id="mobile-theme-mode-toggle"
+              type="button"
               onClick={toggleMode}
               className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-900/80 active:scale-95 shrink-0"
               aria-label={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -310,6 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Quick Admin button on mobile */}
             <button
               id="mobile-admin-quick-btn"
+              type="button"
               onClick={onOpenAdmin}
               title="Admin CMS"
               className="h-8 px-2 sm:px-2.5 flex items-center gap-1 text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg border border-amber-500/30 active:scale-95 shrink-0"
@@ -322,6 +199,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Hamburger Menu Toggle Button */}
             <button
               id="mobile-menu-toggle-btn"
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="w-8 h-8 flex items-center justify-center text-slate-200 hover:text-white hover:bg-slate-900 rounded-lg transition-colors border border-slate-800/60 bg-slate-900/50 active:scale-95 shrink-0"
               aria-label="Toggle Navigation Menu"
@@ -354,43 +232,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </a>
               ))}
               <div className="pt-3 mt-2 border-t border-slate-800/80 flex flex-col gap-2.5">
-                {/* Mobile Theme Switcher Row */}
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-300 font-medium flex items-center gap-1.5">
-                      <Palette className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Theme Preset</span>
-                    </span>
-                    <span className="text-xs font-bold text-amber-400">{effectiveTheme.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                    {PREMIUM_THEMES.map((t) => {
-                      const isSel = effectiveThemeId === t.id;
-                      return (
-                        <button
-                          key={t.id}
-                          onClick={() => setThemeId(t.id)}
-                          className={`h-7 px-2.5 rounded-lg flex items-center gap-1.5 text-[11px] font-semibold shrink-0 transition-all cursor-pointer ${
-                            isSel
-                              ? 'bg-slate-800 text-white border border-slate-600 shadow-sm'
-                              : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 border border-slate-800'
-                          }`}
-                        >
-                          <div
-                            className="w-2.5 h-2.5 rounded-full"
-                            style={{ backgroundColor: t.colors.primary }}
-                          />
-                          <span>{t.name.split(' ')[0]}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
                 {/* Mobile Mode Switcher Row */}
                 <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900 border border-slate-800">
                   <span className="text-xs text-slate-300 font-medium">Appearance</span>
                   <button
+                    type="button"
                     onClick={toggleMode}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-semibold text-slate-200 hover:text-white"
                   >
@@ -409,6 +255,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     onOpenAdmin();

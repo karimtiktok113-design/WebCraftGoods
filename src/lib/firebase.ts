@@ -92,10 +92,8 @@ function testConnection() {
         getDocFromServer(doc(db, 'test', 'connection')),
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),
       ]);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('the client is offline')) {
-        console.warn('Firebase client offline or connecting: Operating in fast offline cache mode.');
-      }
+    } catch {
+      // Gracefully silent: Firestore operates seamlessly with offline cache
     }
   };
 

@@ -209,6 +209,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
                       <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input
                         type="email"
+                        name="email"
+                        autoComplete="email"
+                        aria-label="Email address for newsletter"
                         required
                         value={newsletterEmail}
                         onChange={(e) => setNewsletterEmail(e.target.value)}
@@ -601,6 +604,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-fadeIn">
             <button
+              type="button"
               onClick={() => setActiveLegalModal(null)}
               className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               aria-label="Close dialog"
@@ -616,6 +620,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigateHome }) =
             </p>
             <div className="flex justify-end">
               <button
+                type="button"
                 onClick={() => setActiveLegalModal(null)}
                 className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors cursor-pointer"
               >

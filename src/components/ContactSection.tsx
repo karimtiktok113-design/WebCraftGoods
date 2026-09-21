@@ -155,6 +155,8 @@ export const ContactSection: React.FC = () => {
                     </label>
                     <input
                       id="contact-name"
+                      name="name"
+                      autoComplete="name"
                       type="text"
                       required
                       value={formData.name}
@@ -170,6 +172,8 @@ export const ContactSection: React.FC = () => {
                     </label>
                     <input
                       id="contact-email"
+                      name="email"
+                      autoComplete="email"
                       type="email"
                       required
                       value={formData.email}
@@ -186,6 +190,7 @@ export const ContactSection: React.FC = () => {
                   </label>
                   <input
                     id="contact-subject"
+                    name="subject"
                     type="text"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
@@ -200,6 +205,7 @@ export const ContactSection: React.FC = () => {
                   </label>
                   <textarea
                     id="contact-message"
+                    name="message"
                     required
                     rows={4}
                     value={formData.message}

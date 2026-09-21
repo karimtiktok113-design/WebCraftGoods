@@ -25,10 +25,20 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_MODE_KEY = 'webcraft_theme_mode';
-const LOCAL_STORAGE_THEME_KEY = 'webcraft_selected_theme_id';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { websiteContent, updateWebsiteContent } = useData();
+
+  // Clear any legacy client-side visitor theme overrides from local storage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('webcraft_selected_theme_id');
+      } catch {
+        // Safe ignore
+      }
+    }
+  }, []);
 
   // The persistent store-wide theme chosen by the admin from Firestore
   const storeThemeSettings: StoreThemeSettings = useMemo(() => {
@@ -47,26 +57,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return storeThemeSettings.defaultMode || 'dark';
   });
 
-  // Local visitor/admin theme selection
-  const [userThemeId, setUserThemeId] = useState<PremiumThemeId | null>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) as PremiumThemeId;
-      if (saved && PREMIUM_THEMES.some((t) => t.id === saved)) {
-        return saved;
-      }
-    }
-    return null;
-  });
-
   // Live admin temporary preview before saving
   const [previewThemeId, setPreviewThemeId] = useState<PremiumThemeId | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Store-level active theme ID (from Firestore or default)
+  // Store-level active theme ID (strictly configured from Firestore by store administrator)
   const activeThemeId: PremiumThemeId = storeThemeSettings.activeThemeId || 'amber-gold';
 
-  // Effective theme currently visible (preview has highest precedence, then user selection, then store default)
-  const effectiveThemeId: PremiumThemeId = previewThemeId || userThemeId || activeThemeId;
+  // Effective theme currently visible: strictly controlled by the admin panel.
+  // live admin temporary preview has precedence while the admin is testing in the CMS panel.
+  const effectiveThemeId: PremiumThemeId = previewThemeId || activeThemeId;
   const effectiveTheme = useMemo(() => getThemeConfig(effectiveThemeId), [effectiveThemeId]);
   const activeTheme = useMemo(() => getThemeConfig(activeThemeId), [activeThemeId]);
 
@@ -126,11 +126,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setMode(next);
   };
 
+  // Allows previewing a theme in live admin preview mode
   const setThemeId = (newThemeId: PremiumThemeId) => {
-    setUserThemeId(newThemeId);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(LOCAL_STORAGE_THEME_KEY, newThemeId);
-    }
+    setPreviewThemeId(newThemeId);
   };
 
   // Admin-only: Activate a premium theme globally across the store
@@ -143,10 +141,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updatedAt: new Date().toISOString(),
       };
       await updateWebsiteContent('theme', updatedSettings);
-      setUserThemeId(themeId);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(LOCAL_STORAGE_THEME_KEY, themeId);
-      }
       setPreviewThemeId(null);
     } finally {
       setIsSaving(false);

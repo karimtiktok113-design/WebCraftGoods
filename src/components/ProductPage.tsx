@@ -112,7 +112,14 @@ export const ProductPage: React.FC<ProductPageProps> = ({
 
   const handlePurchase = () => {
     if (product.purchaseLink) {
-      window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
+      try {
+        const opened = window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
+        if (!opened) {
+          window.location.href = product.purchaseLink;
+        }
+      } catch {
+        window.location.href = product.purchaseLink;
+      }
     }
   };
 
@@ -130,6 +137,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
         {/* Top Breadcrumbs & Back Navigation */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6 sm:mb-8 text-xs text-slate-400">
           <button
+            type="button"
             onClick={onBack}
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 hover:text-white transition-all active:scale-95 shadow-sm"
           >
@@ -197,6 +205,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
               {hasMultipleImages && (
                 <>
                   <button
+                    type="button"
                     onClick={handlePrev}
                     aria-label="Previous image"
                     className="absolute left-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/80 shadow-xl backdrop-blur-md transition-all active:scale-95 z-20 opacity-80 hover:opacity-100"
@@ -205,6 +214,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
                   </button>
 
                   <button
+                    type="button"
                     onClick={handleNext}
                     aria-label="Next image"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/80 shadow-xl backdrop-blur-md transition-all active:scale-95 z-20 opacity-80 hover:opacity-100"
@@ -226,7 +236,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({
                 {images.map((imgUrl, idx) => (
                   <button
                     key={idx}
+                    type="button"
                     onClick={() => setSelectedImageIndex(idx)}
+                    aria-label={`View photo ${idx + 1}`}
                     className={`relative w-14 h-14 sm:w-16 sm:h-16 aspect-square rounded-xl overflow-hidden shrink-0 border-2 transition-all duration-200 active:scale-95 bg-slate-950 ${
                       idx === selectedImageIndex
                         ? 'border-amber-400 scale-105 shadow-md shadow-amber-500/20'
@@ -322,6 +334,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
             <div className="pt-4 border-t border-slate-800/80 flex items-center gap-2.5 sm:gap-3">
               <motion.button
                 id="product-page-purchase-btn"
+                type="button"
                 onClick={handlePurchase}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -334,10 +347,12 @@ export const ProductPage: React.FC<ProductPageProps> = ({
               </motion.button>
 
               <motion.button
+                type="button"
                 onClick={handleShare}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Copy share link"
+                aria-label="Copy share link"
                 className="p-3 sm:p-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 relative cursor-pointer"
               >
                 {copied ? (
@@ -405,6 +420,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
               </div>
 
               <button
+                type="button"
                 onClick={handlePurchase}
                 className="w-full sm:w-auto px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 shrink-0"
               >
@@ -430,6 +446,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
               </div>
 
               <button
+                type="button"
                 onClick={onBack}
                 className="hidden sm:inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-semibold transition-colors"
               >
@@ -490,6 +507,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
         >
           {/* Close Button */}
           <button
+            type="button"
             onClick={() => setIsLightboxOpen(false)}
             aria-label="Close Overview"
             className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 w-11 h-11 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700 shadow-2xl transition-all active:scale-95"
@@ -500,6 +518,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
           {/* Prev Button */}
           {hasMultipleImages && (
             <button
+              type="button"
               onClick={handlePrev}
               aria-label="Previous Image"
               className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white flex items-center justify-center border border-slate-700 shadow-2xl transition-all active:scale-95"
@@ -511,6 +530,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({
           {/* Next Button */}
           {hasMultipleImages && (
             <button
+              type="button"
               onClick={handleNext}
               aria-label="Next Image"
               className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white flex items-center justify-center border border-slate-700 shadow-2xl transition-all active:scale-95"

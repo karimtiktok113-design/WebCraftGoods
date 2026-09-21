@@ -83,6 +83,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
             {categories.map((cat) => (
               <motion.button
                 key={cat}
+                type="button"
                 id={`cat-filter-${cat.toLowerCase().replace(/\s+/g, '-')}`}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.95 }}
@@ -103,6 +104,8 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               id="product-search-input"
+              name="search"
+              aria-label="Search products or templates"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -167,6 +170,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
                   No products matched "{searchQuery}" in category "{selectedCategory}".
                 </p>
                 <button
+                  type="button"
                   onClick={() => {
                     setSearchQuery('');
                     setSelectedCategory('All');

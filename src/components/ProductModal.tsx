@@ -79,7 +79,14 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
 
   const handlePurchase = () => {
     if (product.purchaseLink) {
-      window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
+      try {
+        const opened = window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
+        if (!opened) {
+          window.location.href = product.purchaseLink;
+        }
+      } catch {
+        window.location.href = product.purchaseLink;
+      }
     }
   };
 
@@ -134,6 +141,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
               {hasMultipleImages && (
                 <>
                   <button
+                    type="button"
                     onClick={handlePrev}
                     aria-label="Previous photo"
                     className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-950/85 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700 shadow-xl backdrop-blur-sm transition-transform active:scale-95"
@@ -142,6 +150,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
                   </button>
 
                   <button
+                    type="button"
                     onClick={handleNext}
                     aria-label="Next photo"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-950/85 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700 shadow-xl backdrop-blur-sm transition-transform active:scale-95"
@@ -163,7 +172,9 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
                 {images.map((imgUrl, idx) => (
                   <button
                     key={idx}
+                    type="button"
                     onClick={() => setSelectedImageIndex(idx)}
+                    aria-label={`View photo ${idx + 1}`}
                     className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden shrink-0 border-2 transition-all duration-200 active:scale-95 ${
                       idx === selectedImageIndex
                         ? 'border-amber-400 scale-105 shadow-md shadow-amber-500/20'
@@ -269,6 +280,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
             <div className="pt-3 sm:pt-4 border-t border-slate-800/80 flex items-center gap-2.5 sm:gap-3 mt-auto">
               <motion.button
                 id="modal-purchase-now-btn"
+                type="button"
                 onClick={handlePurchase}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -281,10 +293,12 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
 
               <motion.button
                 id="modal-share-btn"
+                type="button"
                 onClick={handleShare}
                 whileHover={{ scale: 1.06 }}
                 whileTap={{ scale: 0.94 }}
                 title="Copy share link"
+                aria-label="Copy share link"
                 className="p-3 sm:p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors shrink-0 cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />

@@ -57,7 +57,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
   const handlePurchaseClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (product.purchaseLink) {
-      window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
+      try {
+        const opened = window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
+        if (!opened) {
+          window.location.href = product.purchaseLink;
+        }
+      } catch {
+        window.location.href = product.purchaseLink;
+      }
     } else {
       onSelect(product);
     }
@@ -130,6 +137,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           <>
             <button
               id={`prev-image-btn-${product.id}`}
+              type="button"
               onClick={handlePrev}
               aria-label="Previous image"
               className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/70 shadow-lg backdrop-blur-sm transition-opacity duration-200 z-20 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 active:scale-95"
@@ -139,6 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
 
             <button
               id={`next-image-btn-${product.id}`}
+              type="button"
               onClick={handleNext}
               aria-label="Next image"
               className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/70 shadow-lg backdrop-blur-sm transition-opacity duration-200 z-20 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 active:scale-95"
@@ -151,6 +160,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
               {images.map((_, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={(e) => handleDotClick(e, idx)}
                   aria-label={`Go to slide ${idx + 1}`}
                   className={`transition-all duration-200 rounded-full ${

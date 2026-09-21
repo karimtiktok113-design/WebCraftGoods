@@ -25,6 +25,9 @@ import {
   AlertCircle,
   Palette,
   Columns,
+  ArrowUp,
+  ArrowDown,
+  ListOrdered,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
@@ -59,6 +62,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     addFaq,
     updateFaq,
     deleteFaq,
+    reorderFaqs,
+    moveFaq,
+    updateFaqOrder,
     updateWebsiteContent,
     updateMessageStatus,
     deleteMessage,
@@ -82,6 +88,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
   const [faqForm, setFaqForm] = useState({ question: '', answer: '', order: 1 });
+  const [isReorderingFaq, setIsReorderingFaq] = useState<string | null>(null);
+  const [faqOrderToast, setFaqOrderToast] = useState<string | null>(null);
+  const [faqOrderError, setFaqOrderError] = useState<string | null>(null);
 
   // Website Content state
   const [heroForm, setHeroForm] = useState(websiteContent.hero);
@@ -287,7 +296,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   // FAQ operations
   const handleOpenNewFaq = () => {
     setEditingFaq(null);
-    setFaqForm({ question: '', answer: '', order: faqs.length + 1 });
+    const maxOrder = faqs.length > 0 ? Math.max(...faqs.map((f) => f.order ?? 0)) : 0;
+    setFaqForm({ question: '', answer: '', order: maxOrder + 1 });
     setIsFaqModalOpen(true);
   };
 
@@ -302,10 +312,59 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     if (!faqForm.question || !faqForm.answer) return;
     if (editingFaq) {
       await updateFaq(editingFaq.id, faqForm);
+      if (faqForm.order !== undefined && faqForm.order !== editingFaq.order) {
+        await updateFaqOrder(editingFaq.id, faqForm.order);
+      }
     } else {
       await addFaq(faqForm);
     }
     setIsFaqModalOpen(false);
+  };
+
+  const handleMoveFaq = async (faqId: string, direction: 'up' | 'down') => {
+    setIsReorderingFaq(faqId);
+    setFaqOrderError(null);
+    try {
+      await moveFaq(faqId, direction);
+      setFaqOrderToast('FAQ order updated live');
+      setTimeout(() => setFaqOrderToast(null), 3000);
+    } catch (err: any) {
+      setFaqOrderError(err.message || 'Failed to reorder FAQs');
+      setTimeout(() => setFaqOrderError(null), 4000);
+    } finally {
+      setIsReorderingFaq(null);
+    }
+  };
+
+  const handleDirectPositionChange = async (faqId: string, targetOrder: number) => {
+    setIsReorderingFaq(faqId);
+    setFaqOrderError(null);
+    try {
+      await updateFaqOrder(faqId, targetOrder);
+      setFaqOrderToast(`FAQ moved to position #${targetOrder}`);
+      setTimeout(() => setFaqOrderToast(null), 3000);
+    } catch (err: any) {
+      setFaqOrderError(err.message || 'Failed to adjust position');
+      setTimeout(() => setFaqOrderError(null), 4000);
+    } finally {
+      setIsReorderingFaq(null);
+    }
+  };
+
+  const handleNormalizeFaqSequence = async () => {
+    setIsReorderingFaq('all');
+    setFaqOrderError(null);
+    try {
+      const sorted = [...faqs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      await reorderFaqs(sorted.map((f) => f.id));
+      setFaqOrderToast(`FAQ order normalized (1 to ${sorted.length})`);
+      setTimeout(() => setFaqOrderToast(null), 3000);
+    } catch (err: any) {
+      setFaqOrderError(err.message || 'Failed to normalize FAQ sequence');
+      setTimeout(() => setFaqOrderError(null), 4000);
+    } finally {
+      setIsReorderingFaq(null);
+    }
   };
 
   // Website Content Save
@@ -1052,53 +1111,170 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
           )}
 
           {/* FAQS TAB */}
-          {currentTab === 'faqs' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-white font-heading">FAQ Management</h2>
-                  <p className="text-xs text-slate-400">
-                    Add and update frequently asked questions stored directly in Firestore.
-                  </p>
-                </div>
-                <button
-                  onClick={handleOpenNewFaq}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add FAQ
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                {faqs.map((faq) => (
-                  <div
-                    key={faq.id}
-                    className="p-5 rounded-2xl bg-slate-900 border border-slate-800 flex items-start justify-between gap-4"
-                  >
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-bold text-white">{faq.question}</h4>
-                      <p className="text-xs text-slate-300 leading-relaxed font-light">{faq.answer}</p>
+          {currentTab === 'faqs' && (() => {
+            const sortedFaqs = [...faqs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+            return (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h2 className="text-2xl font-bold text-white font-heading">FAQ Management & Ordering</h2>
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono font-semibold">
+                        {sortedFaqs.length} items
+                      </span>
                     </div>
-                    <div className="flex gap-1 shrink-0">
-                      <button
-                        onClick={() => handleOpenEditFaq(faq)}
-                        className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => deleteFaq(faq.id)}
-                        className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                    <p className="text-xs text-slate-400">
+                      Reorder questions using the Up/Down buttons or position selector. Ordering changes update live across the storefront.
+                    </p>
                   </div>
-                ))}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleNormalizeFaqSequence}
+                      disabled={isReorderingFaq !== null || sortedFaqs.length === 0}
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium border border-slate-700 transition-all disabled:opacity-50"
+                      title="Ensure sequential 1..N order with no gaps or duplicate numbers"
+                    >
+                      <ListOrdered className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Normalize Order</span>
+                    </button>
+                    <button
+                      onClick={handleOpenNewFaq}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add FAQ
+                    </button>
+                  </div>
+                </div>
+
+                {/* Notifications & Toast */}
+                {faqOrderToast && (
+                  <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between animate-fadeIn">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span>{faqOrderToast}</span>
+                    </div>
+                    <span className="text-[10px] text-amber-400/80 font-mono">Live In Firestore</span>
+                  </div>
+                )}
+
+                {faqOrderError && (
+                  <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                    <span>{faqOrderError}</span>
+                  </div>
+                )}
+
+                {/* FAQs List */}
+                <div className="space-y-3">
+                  {sortedFaqs.length === 0 ? (
+                    <div className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center">
+                      <p className="text-slate-400 text-sm">No FAQs found.</p>
+                      <button
+                        onClick={handleOpenNewFaq}
+                        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add First Question
+                      </button>
+                    </div>
+                  ) : (
+                    sortedFaqs.map((faq, index) => {
+                      const isFirst = index === 0;
+                      const isLast = index === sortedFaqs.length - 1;
+                      const isBusy = isReorderingFaq === faq.id || isReorderingFaq === 'all';
+
+                      return (
+                        <div
+                          key={faq.id}
+                          className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700/80 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        >
+                          <div className="flex items-start gap-3 sm:gap-4 flex-1">
+                            {/* Reordering Controls Pill */}
+                            <div className="flex sm:flex-col items-center gap-1.5 shrink-0 bg-slate-950/80 p-2 rounded-xl border border-slate-800">
+                              <span
+                                className="text-[11px] font-mono font-bold text-amber-400 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20"
+                                title={`Storefront Display Position: #${index + 1}`}
+                              >
+                                #{index + 1}
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleMoveFaq(faq.id, 'up')}
+                                  disabled={isFirst || isBusy}
+                                  title={isFirst ? 'Already at the top' : 'Move up'}
+                                  className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                >
+                                  <ArrowUp className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleMoveFaq(faq.id, 'down')}
+                                  disabled={isLast || isBusy}
+                                  title={isLast ? 'Already at the bottom' : 'Move down'}
+                                  className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                >
+                                  <ArrowDown className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <select
+                                value={index + 1}
+                                disabled={isBusy}
+                                onChange={(e) => handleDirectPositionChange(faq.id, Number(e.target.value))}
+                                title="Jump to position"
+                                className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 rounded px-1.5 py-0.5 outline-none focus:border-amber-500 cursor-pointer font-mono"
+                              >
+                                {sortedFaqs.map((_, i) => (
+                                  <option key={i + 1} value={i + 1}>
+                                    Pos {i + 1}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            {/* Content */}
+                            <div className="space-y-1.5 flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <h4 className="text-sm font-bold text-white leading-snug">{faq.question}</h4>
+                                <span className="text-[10px] font-mono text-slate-500">
+                                  order: {faq.order ?? (index + 1)}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-300 leading-relaxed font-light line-clamp-3">
+                                {faq.answer}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Item Action Buttons */}
+                          <div className="flex sm:flex-col items-center gap-1.5 shrink-0 self-end sm:self-center border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-800 w-full sm:w-auto justify-end">
+                            <button
+                              onClick={() => handleOpenEditFaq(faq)}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs transition-colors"
+                              title="Edit question, answer, and order"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                              <span className="sm:hidden">Edit</span>
+                            </button>
+                            <button
+                              onClick={() => deleteFaq(faq.id)}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs transition-colors"
+                              title="Delete question"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span className="sm:hidden">Delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* WEBSITE CONTENT CMS TAB */}
           {currentTab === 'content' && (
@@ -1732,15 +1908,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   onChange={(e) => setFeatureForm({ ...featureForm, icon: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs outline-none"
                 >
-                  <option value="Zap">Zap</option>
-                  <option value="ShieldCheck">ShieldCheck</option>
-                  <option value="RefreshCw">RefreshCw</option>
+                  <option value="Zap">⚡ Zap (Simple & Easy)</option>
+                  <option value="Palette">🎨 Palette (Modern Design)</option>
+                  <option value="Smartphone">📱 Smartphone (Responsive)</option>
+                  <option value="Globe">🌐 Globe (Works Offline)</option>
+                  <option value="HardDrive">💾 HardDrive (Local Saving)</option>
+                  <option value="RefreshCw">🔄 RefreshCw (Backup & Restore)</option>
+                  <option value="BarChart3">📊 BarChart3 (Dashboards & Insights)</option>
+                  <option value="Share2">📤 Share2 (Export Options)</option>
+                  <option value="Download">Download</option>
                   <option value="Sparkles">Sparkles</option>
+                  <option value="ShieldCheck">ShieldCheck</option>
                   <option value="Layers">Layers</option>
                   <option value="Headphones">Headphones</option>
                   <option value="Code2">Code2</option>
                   <option value="Cpu">Cpu</option>
-                  <option value="Palette">Palette</option>
                 </select>
               </div>
               <div>
@@ -1810,6 +1992,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   onChange={(e) => setFaqForm({ ...faqForm, answer: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs outline-none resize-none"
                 />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-300 mb-1">Display Order (Position)</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={faqs.length + 5}
+                  value={faqForm.order}
+                  onChange={(e) => setFaqForm({ ...faqForm, order: parseInt(e.target.value) || 1 })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs outline-none"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Controls position on the storefront (e.g. 1 is shown first).
+                </p>
               </div>
               <div className="pt-3 flex justify-end gap-2">
                 <button

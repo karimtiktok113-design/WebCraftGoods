@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, HelpCircle, MessageSquare } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
 export const FaqSection: React.FC = () => {
   const { faqs } = useData();
-  const [openFaqId, setOpenFaqId] = useState<string | null>(faqs[0]?.id || null);
+  const sortedFaqs = useMemo(() => {
+    return [...faqs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }, [faqs]);
+  const [openFaqId, setOpenFaqId] = useState<string | null>(sortedFaqs[0]?.id || null);
 
   const toggleFaq = (id: string) => {
     setOpenFaqId((prev) => (prev === id ? null : id));
@@ -36,7 +39,7 @@ export const FaqSection: React.FC = () => {
 
         {/* FAQ Accordion List */}
         <div className="space-y-3 sm:space-y-4">
-          {faqs.map((faq, index) => {
+          {sortedFaqs.map((faq, index) => {
             const isOpen = openFaqId === faq.id;
             return (
               <motion.div

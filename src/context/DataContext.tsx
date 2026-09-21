@@ -7,6 +7,7 @@ import {
   updateDoc,
   deleteDoc,
   addDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { useAuth } from './AuthContext';
@@ -26,7 +27,7 @@ import {
 
 const PRODUCTS_CACHE_KEY = 'webcraft_products_cache_v2';
 const CONTENT_CACHE_KEY = 'webcraft_content_cache_v2';
-const FEATURES_CACHE_KEY = 'webcraft_features_cache_v2';
+const FEATURES_CACHE_KEY = 'webcraft_features_cache_v3';
 const FAQS_CACHE_KEY = 'webcraft_faqs_cache_v2';
 
 function loadCachedData<T>(key: string, fallback: T): T {
@@ -73,6 +74,9 @@ interface DataContextType {
   addFaq: (faq: Omit<FAQ, 'id'>) => Promise<string>;
   updateFaq: (id: string, faq: Partial<FAQ>) => Promise<void>;
   deleteFaq: (id: string) => Promise<void>;
+  reorderFaqs: (orderedIds: string[]) => Promise<void>;
+  moveFaq: (id: string, direction: 'up' | 'down') => Promise<void>;
+  updateFaqOrder: (id: string, newOrder: number) => Promise<void>;
   updateWebsiteContent: (section: 'hero' | 'about' | 'footer' | 'theme', data: any) => Promise<void>;
   submitContactMessage: (msg: { name: string; email: string; subject: string; message: string }) => Promise<void>;
   updateMessageStatus: (id: string, status: 'unread' | 'read') => Promise<void>;
@@ -507,10 +511,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // FAQ CRUD
   const addFaq = async (faq: Omit<FAQ, 'id'>): Promise<string> => {
     try {
+      const maxOrder = faqs.length > 0 ? Math.max(...faqs.map((f) => f.order ?? 0)) : 0;
+      const order = faq.order !== undefined && faq.order > 0 ? faq.order : maxOrder + 1;
       const docRef = await addDoc(collection(db, 'faqs'), {
         question: faq.question,
         answer: faq.answer,
-        order: faq.order ?? faqs.length + 1,
+        order,
       });
       return docRef.id;
     } catch (error) {
@@ -522,6 +528,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateFaq = async (id: string, faq: Partial<FAQ>): Promise<void> => {
     try {
       await updateDoc(doc(db, 'faqs', id), { ...faq });
+      if (faq.order !== undefined) {
+        setFaqs((prev) => {
+          const updated = prev.map((f) => (f.id === id ? { ...f, ...faq } : f));
+          updated.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+          saveCachedData(FAQS_CACHE_KEY, updated);
+          return updated;
+        });
+      }
     } catch (error) {
       handleFirestoreError(error, OperationType.UPDATE, `faqs/${id}`);
       throw error;
@@ -531,10 +545,80 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteFaq = async (id: string): Promise<void> => {
     try {
       await deleteDoc(doc(db, 'faqs', id));
+      // Re-normalize remaining items' orders in local state
+      setFaqs((prev) => {
+        const remaining = prev.filter((f) => f.id !== id);
+        return remaining;
+      });
     } catch (error) {
       handleFirestoreError(error, OperationType.DELETE, `faqs/${id}`);
       throw error;
     }
+  };
+
+  const reorderFaqs = async (orderedIds: string[]): Promise<void> => {
+    // Construct sequential 1..N order
+    const orderedList: FAQ[] = [];
+    const currentList = [...faqs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+    orderedIds.forEach((id, index) => {
+      const found = currentList.find((f) => f.id === id);
+      if (found) {
+        orderedList.push({ ...found, order: index + 1 });
+      }
+    });
+
+    currentList.forEach((f) => {
+      if (!orderedIds.includes(f.id)) {
+        orderedList.push({ ...f, order: orderedList.length + 1 });
+      }
+    });
+
+    // Optimistically update local state & cache
+    setFaqs(orderedList);
+    saveCachedData(FAQS_CACHE_KEY, orderedList);
+
+    // Batch update to Firestore
+    try {
+      const batch = writeBatch(db);
+      orderedList.forEach((item) => {
+        batch.update(doc(db, 'faqs', item.id), { order: item.order });
+      });
+      await batch.commit();
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, 'faqs');
+      throw error;
+    }
+  };
+
+  const moveFaq = async (id: string, direction: 'up' | 'down'): Promise<void> => {
+    const sorted = [...faqs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const currentIndex = sorted.findIndex((f) => f.id === id);
+    if (currentIndex === -1) return;
+
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= sorted.length) return;
+
+    const newSorted = [...sorted];
+    const [movedItem] = newSorted.splice(currentIndex, 1);
+    newSorted.splice(targetIndex, 0, movedItem);
+
+    await reorderFaqs(newSorted.map((f) => f.id));
+  };
+
+  const updateFaqOrder = async (id: string, newOrder: number): Promise<void> => {
+    const sorted = [...faqs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const currentIndex = sorted.findIndex((f) => f.id === id);
+    if (currentIndex === -1) return;
+
+    const targetIndex = Math.max(0, Math.min(newOrder - 1, sorted.length - 1));
+    if (targetIndex === currentIndex) return;
+
+    const newSorted = [...sorted];
+    const [movedItem] = newSorted.splice(currentIndex, 1);
+    newSorted.splice(targetIndex, 0, movedItem);
+
+    await reorderFaqs(newSorted.map((f) => f.id));
   };
 
   // Website Content
@@ -648,6 +732,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addFaq,
         updateFaq,
         deleteFaq,
+        reorderFaqs,
+        moveFaq,
+        updateFaqOrder,
         updateWebsiteContent,
         submitContactMessage,
         updateMessageStatus,

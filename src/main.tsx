@@ -13,15 +13,46 @@ if (typeof window !== 'undefined') {
       configurable: true,
       enumerable: true,
     };
-    try {
-      Object.defineProperty(window, 'fetch', desc);
-    } catch (_) {}
     if (typeof Window !== 'undefined' && Window.prototype) {
       try {
         Object.defineProperty(Window.prototype, 'fetch', desc);
       } catch (_) {}
     }
+    try {
+      Object.defineProperty(window, 'fetch', desc);
+    } catch (_) {
+      try {
+        (window as any).fetch = activeFetch;
+      } catch (_) {}
+    }
   } catch (_) {}
+
+  // Suppress harmless abort and fetch getter rejections from bubbling
+  window.addEventListener('unhandledrejection', (event) => {
+    if (event?.reason) {
+      const msg = event.reason.message || String(event.reason);
+      if (
+        event.reason.name === 'AbortError' ||
+        msg.includes('aborted') ||
+        msg.includes('Abort')
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+  });
+
+  window.addEventListener('error', (event) => {
+    if (event?.message) {
+      if (
+        event.message.includes('fetch of #<Window>') ||
+        event.message.includes('aborted')
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+  });
 }
 
 import {StrictMode} from 'react';

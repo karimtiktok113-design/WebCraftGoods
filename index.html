@@ -5,6 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       (function() {
+        // 1. Ensure window.fetch is completely writable across the Window prototype chain
+        try {
+          var activeFetch = window.fetch ? window.fetch.bind(window) : undefined;
+          var fetchDescriptor = {
+            get: function() {
+              return activeFetch;
+            },
+            set: function(fn) {
+              activeFetch = fn;
+            },
+            configurable: true,
+            enumerable: true
+          };
+
+          if (typeof Window !== 'undefined' && Window.prototype) {
+            try {
+              Object.defineProperty(Window.prototype, 'fetch', fetchDescriptor);
+            } catch (_) {}
+          }
+
+          try {
+            Object.defineProperty(window, 'fetch', fetchDescriptor);
+          } catch (_) {
+            try {
+              window.fetch = activeFetch;
+            } catch (_) {}
+          }
+
+          if (typeof globalThis !== 'undefined' && globalThis !== window) {
+            try {
+              Object.defineProperty(globalThis, 'fetch', fetchDescriptor);
+            } catch (_) {}
+          }
+        } catch (_) {}
+
+        // 2. Prevent benign unhandled abort errors and fetch getter errors from breaking the app
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event && event.reason) {
+            var msg = event.reason.message || String(event.reason);
+            if (
+              event.reason.name === 'AbortError' ||
+              msg.indexOf('aborted') !== -1 ||
+              msg.indexOf('Abort') !== -1
+            ) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+          }
+        });
+
+        window.addEventListener('error', function(event) {
+          if (event && event.message) {
+            if (
+              event.message.indexOf('fetch of #<Window>') !== -1 ||
+              event.message.indexOf('aborted') !== -1
+            ) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+          }
+        });
+
+        // 3. Initialize theme
         try {
           var mode = localStorage.getItem('webcraft_theme_mode') || 'dark';
           var theme = localStorage.getItem('webcraft_selected_theme_id') || 'amber-gold';

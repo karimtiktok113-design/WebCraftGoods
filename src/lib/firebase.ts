@@ -5,8 +5,6 @@ import {
   getFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
-  doc,
-  getDocFromServer,
   Firestore,
 } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -82,27 +80,3 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   return errInfo;
 }
 
-// Non-blocking connection check so initial page render and product loading are never held back
-function testConnection() {
-  if (typeof window === 'undefined') return;
-
-  const runTest = async () => {
-    try {
-      await Promise.race([
-        getDocFromServer(doc(db, 'test', 'connection')),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),
-      ]);
-    } catch {
-      // Gracefully silent: Firestore operates seamlessly with offline cache
-    }
-  };
-
-  // Run in idle time or after the main thread finishes loading products
-  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(runTest, { timeout: 2000 });
-  } else {
-    setTimeout(runTest, 1200);
-  }
-}
-
-testConnection();

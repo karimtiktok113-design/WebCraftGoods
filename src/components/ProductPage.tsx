@@ -455,39 +455,55 @@ export const ProductPage: React.FC<ProductPageProps> = ({
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
               {relatedProducts.map((p) => (
                 <div
                   key={p.id}
                   onClick={() => onSelectProduct(p)}
-                  className="group cursor-pointer rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/50 p-4 transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col"
+                  className="group cursor-pointer rounded-xl sm:rounded-2xl bg-slate-900/70 border border-slate-800/80 hover:border-amber-500/40 p-3 sm:p-3.5 transition-all duration-200 hover:shadow-xl hover:shadow-amber-500/10 flex flex-col justify-between h-full"
                 >
-                  <div className="w-full aspect-square rounded-xl overflow-hidden bg-slate-950 border border-slate-800 mb-3 relative">
-                    <img
-                      src={p.images?.[0] || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'}
-                      alt={p.title}
-                      className="w-full h-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-slate-950/80 text-[10px] text-slate-300 border border-slate-800">
-                      {p.category}
+                  <div>
+                    {/* Clean Square Image (No tags obscuring image) */}
+                    <div className="w-full aspect-square rounded-lg sm:rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80 mb-2.5 relative">
+                      <img
+                        src={p.images?.[0] || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'}
+                        alt={p.title}
+                        className="w-full h-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+
+                    {/* Category & Badge Row (Adjusted inside card, OFF the image) */}
+                    <div className="flex items-center justify-between gap-1 mb-1.5 flex-wrap">
+                      <span className="px-2 py-0.5 rounded bg-slate-800 text-[10px] sm:text-[11px] font-medium text-slate-300 border border-slate-700/60 truncate max-w-[120px]">
+                        {p.category}
+                      </span>
+                      {p.badge && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                          {p.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <h4 className="font-semibold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug min-h-[2.1rem] sm:min-h-[2.5rem] mb-1">
+                      {p.title}
+                    </h4>
+
+                    {/* Price */}
+                    <div className="flex items-baseline gap-1.5 mb-2">
+                      <span className="font-bold text-amber-400 text-sm sm:text-base tabular-nums">
+                        {p.price}
+                      </span>
+                      {p.isDiscounted && p.originalPrice && (
+                        <span className="text-[11px] text-slate-500 line-through tabular-nums">
+                          {p.originalPrice}
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <h4 className="font-bold text-white text-sm group-hover:text-amber-400 transition-colors truncate">
-                      {p.title}
-                    </h4>
-                    <span className="font-bold text-amber-400 text-sm shrink-0">
-                      {p.price}
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-slate-400 line-clamp-2 mb-3">
-                    {p.shortDescription}
-                  </p>
-
-                  <div className="mt-auto pt-2 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400 group-hover:text-amber-400 font-semibold">
+                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 group-hover:text-amber-400 font-semibold mt-auto">
                     <span>View Product</span>
                     <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
                   </div>

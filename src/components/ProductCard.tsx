@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, Eye, ShoppingCart, ExternalLink, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, ShoppingCart, Star } from 'lucide-react';
 import { Product } from '../types';
 
 interface ProductCardProps {
@@ -44,10 +44,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
     const diff = touchStartX.current - touchEndX;
     if (Math.abs(diff) > 40) {
       if (diff > 0) {
-        // Swipe left -> next image
         setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
       } else {
-        // Swipe right -> prev image
         setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
       }
     }
@@ -76,12 +74,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
       onClick={() => onSelect(product)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ y: -8, transition: { duration: 0.25, ease: 'easeOut' } }}
-      className="group relative flex flex-col bg-slate-900/70 hover:bg-slate-900 border border-slate-800/80 hover:border-amber-500/40 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-amber-500/15 transition-[background-color,border-color,box-shadow] duration-300 transform-gpu cursor-pointer"
+      whileHover={{ y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
+      className="group relative flex flex-col bg-slate-900/80 hover:bg-slate-900 border border-slate-800/90 hover:border-amber-500/40 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-200 transform-gpu cursor-pointer h-full"
     >
-      {/* 1:1 Aspect Ratio Square Image Area / Carousel */}
+      {/* 1:1 Aspect Ratio Square Image Area - Clean & Unobscured (No tags on top of image) */}
       <div
-        className="relative w-full aspect-square bg-slate-950 overflow-hidden select-none"
+        className="relative w-full aspect-square bg-slate-950 overflow-hidden select-none shrink-0"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -90,49 +88,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           <img
             src={images[currentImageIndex] || images[0]}
             alt={`${product.title} view ${currentImageIndex + 1}`}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ease-out ${
-              isHovered && !hasMultipleImages ? 'group-hover:scale-105 transition-transform duration-500' : ''
+            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out ${
+              isHovered && !hasMultipleImages ? 'group-hover:scale-105' : ''
             }`}
             loading="lazy"
             decoding="async"
             referrerPolicy="no-referrer"
             onError={(e) => {
-              // Graceful fallback to high quality placeholder if an image URL fails
               (e.currentTarget as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800';
             }}
           />
         </div>
 
-        {/* Top Badges: Category & Tag Badge / Discount */}
-        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-10 gap-1.5">
-          <span className="px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-slate-300 text-[11px] font-semibold tracking-wide shadow-sm truncate">
-            {product.category}
-          </span>
-
-          <div className="flex items-center gap-1.5 shrink-0">
-            {product.isDiscounted && (
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-black tracking-wider bg-rose-500 text-white shadow-sm shadow-rose-500/30">
-                {product.discountPercentage ? `-${product.discountPercentage}%` : 'SALE'}
-              </span>
-            )}
-            {product.badge && (
-              <span
-                className={`px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide shadow-sm backdrop-blur-md ${
-                  product.badge.toLowerCase().includes('best')
-                    ? 'bg-amber-500 text-slate-950 shadow-amber-500/30'
-                    : product.badge.toLowerCase().includes('new')
-                    ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/30'
-                    : 'bg-indigo-500/90 text-white border border-indigo-400/30'
-                }`}
-              >
-                {product.badge}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Carousel Navigation Arrows (desktop hover or mobile always available) */}
+        {/* Carousel Navigation Arrows (Desktop hover or mobile tap) */}
         {hasMultipleImages && (
           <>
             <button
@@ -140,9 +109,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
               type="button"
               onClick={handlePrev}
               aria-label="Previous image"
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/70 shadow-lg backdrop-blur-sm transition-opacity duration-200 z-20 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 active:scale-95"
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/70 shadow-md backdrop-blur-sm transition-opacity duration-200 z-10 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-105 active:scale-95"
             >
-              <ChevronLeft className="w-4 h-4 text-slate-200" />
+              <ChevronLeft className="w-3.5 h-3.5 text-slate-200" />
             </button>
 
             <button
@@ -150,13 +119,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
               type="button"
               onClick={handleNext}
               aria-label="Next image"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/70 shadow-lg backdrop-blur-sm transition-opacity duration-200 z-20 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 active:scale-95"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-950/80 hover:bg-slate-900 text-white flex items-center justify-center border border-slate-700/70 shadow-md backdrop-blur-sm transition-opacity duration-200 z-10 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-105 active:scale-95"
             >
-              <ChevronRight className="w-4 h-4 text-slate-200" />
+              <ChevronRight className="w-3.5 h-3.5 text-slate-200" />
             </button>
 
-            {/* Pagination Dots Overlay */}
-            <div className="absolute bottom-2.5 left-0 right-0 flex justify-center items-center gap-1.5 z-20 pointer-events-auto">
+            {/* Pagination Dots */}
+            <div className="absolute bottom-2 left-0 right-0 flex justify-center items-center gap-1 z-10 pointer-events-auto">
               {images.map((_, idx) => (
                 <button
                   key={idx}
@@ -165,8 +134,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
                   aria-label={`Go to slide ${idx + 1}`}
                   className={`transition-all duration-200 rounded-full ${
                     idx === currentImageIndex
-                      ? 'w-5 h-1.5 bg-amber-400'
-                      : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'
+                      ? 'w-3.5 h-1 bg-amber-400'
+                      : 'w-1 h-1 bg-white/50 hover:bg-white/80'
                   }`}
                 />
               ))}
@@ -175,80 +144,91 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         )}
       </div>
 
-      {/* Product Content Details */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+      {/* Product Content Details (Daraz/Etsy Layout) */}
+      <div className="p-3 sm:p-3.5 flex-1 flex flex-col justify-between">
         <div>
-          {/* Price & Title with strict whitespace-nowrap and tabular numbers */}
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="text-base sm:text-lg font-bold text-white font-heading tracking-tight line-clamp-1 group-hover:text-amber-300 transition-colors flex-1 min-w-0">
-              {product.title}
-            </h3>
-            <div className="flex flex-col items-end shrink-0 pl-1.5">
-              <span className="text-base sm:text-lg font-black text-amber-400 font-heading whitespace-nowrap tabular-nums">
-                {product.price}
-              </span>
-              {product.isDiscounted && product.originalPrice && (
-                <span className="text-xs text-slate-500 line-through tabular-nums -mt-0.5 font-medium">
-                  {product.originalPrice}
+          {/* Tags & Badges Row (Properly adjusted inside the card, OFF the image) */}
+          <div className="flex items-center justify-between gap-1.5 mb-1.5 flex-wrap">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-800/90 border border-slate-700/60 text-slate-300 text-[10px] sm:text-[11px] font-medium tracking-wide truncate max-w-[110px] sm:max-w-[130px]">
+              {product.category}
+            </span>
+
+            <div className="flex items-center gap-1 shrink-0">
+              {product.isDiscounted && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/40">
+                  {product.discountPercentage ? `-${product.discountPercentage}%` : 'SALE'}
+                </span>
+              )}
+              {product.badge && (
+                <span
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide border ${
+                    product.badge.toLowerCase().includes('best')
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      : product.badge.toLowerCase().includes('new')
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      : 'bg-indigo-500/20 text-indigo-300 border-indigo-400/40'
+                  }`}
+                >
+                  {product.badge}
                 </span>
               )}
             </div>
           </div>
 
-          {/* Short description */}
-          <p className="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-3.5 font-light">
-            {product.shortDescription}
-          </p>
+          {/* Product Title (Clean 2-line clamp with uniform height for clean grid alignment) */}
+          <h3 className="text-xs sm:text-sm font-semibold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug min-h-[2.1rem] sm:min-h-[2.5rem] mb-1.5">
+            {product.title}
+          </h3>
 
-          {/* Features Preview tags */}
-          {product.features && product.features.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-4">
-              {product.features.slice(0, 2).map((feat, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800/80 text-[10px] text-slate-300 font-medium whitespace-nowrap"
-                >
-                  <Sparkles className="w-2.5 h-2.5 text-amber-400 shrink-0" />
-                  <span className="line-clamp-1">{feat}</span>
-                </span>
-              ))}
-              {product.features.length > 2 && (
-                <span className="px-1.5 py-0.5 rounded bg-slate-800/50 text-[10px] text-slate-400 font-medium whitespace-nowrap">
-                  +{product.features.length - 2} more
-                </span>
-              )}
+          {/* Etsy/Daraz Social Proof / Trust Line */}
+          <div className="flex items-center gap-1.5 text-[11px] mb-2 text-slate-400">
+            <div className="flex items-center text-amber-400 font-semibold text-[11px]">
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400 mr-0.5" />
+              <span>5.0</span>
             </div>
-          )}
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-400 text-[10px] sm:text-[11px] truncate">
+              Instant Download
+            </span>
+          </div>
+
+          {/* Price display with discount details */}
+          <div className="flex items-baseline gap-1.5 mb-2.5 flex-wrap">
+            <span className="text-sm sm:text-base font-bold text-amber-400 font-heading tabular-nums">
+              {product.price}
+            </span>
+            {product.isDiscounted && product.originalPrice && (
+              <span className="text-[11px] sm:text-xs text-slate-500 line-through tabular-nums font-normal">
+                {product.originalPrice}
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Buttons Action Bar - clean, responsive single line per button */}
-        <div className="pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-2 mt-auto">
-          <motion.button
+        {/* Action Buttons Bar - Compact, 2-column on mobile & desktop */}
+        <div className="pt-2 sm:pt-2.5 border-t border-slate-800/80 grid grid-cols-2 gap-1.5 mt-auto">
+          <button
             id={`details-btn-${product.id}`}
             type="button"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.96 }}
             onClick={(e) => {
               e.stopPropagation();
               onSelect(product);
             }}
-            className="flex items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 text-[11px] sm:text-xs font-semibold transition-colors border border-slate-700/60 whitespace-nowrap cursor-pointer"
+            className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-[11px] font-medium transition-colors border border-slate-700/60 whitespace-nowrap cursor-pointer active:scale-95"
           >
-            <Eye className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="whitespace-nowrap">View Product</span>
-          </motion.button>
+            <Eye className="w-3 h-3 text-amber-400 shrink-0" />
+            <span className="truncate">View</span>
+          </button>
 
-          <motion.button
+          <button
             id={`purchase-btn-${product.id}`}
             type="button"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.96 }}
             onClick={handlePurchaseClick}
-            className="shimmer-btn flex items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] sm:text-xs font-bold transition-[background-color,box-shadow] shadow-sm shadow-amber-500/20 whitespace-nowrap cursor-pointer"
+            className="shimmer-btn flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold transition-all shadow-sm shadow-amber-500/20 whitespace-nowrap cursor-pointer active:scale-95"
           >
-            <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
-            <span className="whitespace-nowrap">Purchase</span>
-          </motion.button>
+            <ShoppingCart className="w-3 h-3 shrink-0" />
+            <span className="truncate">Buy Now</span>
+          </button>
         </div>
       </div>
     </motion.div>

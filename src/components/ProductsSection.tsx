@@ -117,28 +117,30 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
 
         {/* Loading State - only shown if products are not yet available from cache */}
         {loading && products.length === 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {[1, 2, 3].map((n) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
               <div
                 key={n}
-                className="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 animate-pulse aspect-square flex flex-col justify-between"
+                className="bg-slate-900/50 border border-slate-800 rounded-xl sm:rounded-2xl p-3 animate-pulse flex flex-col justify-between"
               >
-                <div className="w-full aspect-square bg-slate-800/60 rounded-xl mb-4" />
-                <div className="h-5 bg-slate-800/80 rounded w-3/4 mb-2" />
-                <div className="h-4 bg-slate-800/40 rounded w-1/2" />
+                <div className="w-full aspect-square bg-slate-800/60 rounded-lg sm:rounded-xl mb-3" />
+                <div className="h-3.5 bg-slate-800/80 rounded w-1/3 mb-2" />
+                <div className="h-4 bg-slate-800/80 rounded w-3/4 mb-2" />
+                <div className="h-3.5 bg-slate-800/40 rounded w-1/2 mb-3" />
+                <div className="h-8 bg-slate-800/60 rounded-lg mt-auto" />
               </div>
             ))}
           </div>
         ) : filteredProducts.length > 0 ? (
-          /* Products Grid with 1:1 Aspect Ratio Cards and Staggered Entry Animation */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          /* Products Grid with 1:1 Aspect Ratio Cards (Daraz & Etsy compact 4-col / 2-col style) */
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.25), ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.2), ease: [0.22, 1, 0.36, 1] }}
                 className="h-full flex flex-col"
               >
                 <ProductCard

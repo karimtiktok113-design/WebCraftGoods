@@ -77,19 +77,6 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
     }
   };
 
-  const handlePurchase = () => {
-    if (product.purchaseLink) {
-      try {
-        const opened = window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
-        if (!opened) {
-          window.location.href = product.purchaseLink;
-        }
-      } catch {
-        window.location.href = product.purchaseLink;
-      }
-    }
-  };
-
   return (
     <motion.div
       id="product-modal-backdrop"
@@ -278,18 +265,28 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
 
             {/* Actions Footer */}
             <div className="pt-3 sm:pt-4 border-t border-slate-800/80 flex items-center gap-2.5 sm:gap-3 mt-auto">
-              <motion.button
-                id="modal-purchase-now-btn"
-                type="button"
-                onClick={handlePurchase}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="shimmer-btn flex-1 inline-flex items-center justify-center gap-2 py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-amber-500/25 transition-all cursor-pointer"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                <span>Purchase & Download</span>
-                <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-0.5" />
-              </motion.button>
+              {product.purchaseLink ? (
+                <motion.a
+                  id="modal-purchase-now-btn"
+                  href={product.purchaseLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="shimmer-btn flex-1 inline-flex items-center justify-center gap-2 py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-amber-500/25 transition-all cursor-pointer"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>Purchase & Download</span>
+                  <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-0.5" />
+                </motion.a>
+              ) : (
+                <div
+                  id="modal-purchase-now-btn"
+                  className="flex-1 inline-flex items-center justify-center gap-2 py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs sm:text-sm cursor-not-allowed"
+                >
+                  <span>Currently Unavailable</span>
+                </div>
+              )}
 
               <motion.button
                 id="modal-share-btn"

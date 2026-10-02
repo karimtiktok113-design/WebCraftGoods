@@ -52,22 +52,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
     touchStartX.current = null;
   };
 
-  const handlePurchaseClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (product.purchaseLink) {
-      try {
-        const opened = window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
-        if (!opened) {
-          window.location.href = product.purchaseLink;
-        }
-      } catch {
-        window.location.href = product.purchaseLink;
-      }
-    } else {
-      onSelect(product);
-    }
-  };
-
   return (
     <motion.div
       id={`product-card-${product.id}`}
@@ -220,15 +204,32 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
             <span className="truncate">View</span>
           </button>
 
-          <button
-            id={`purchase-btn-${product.id}`}
-            type="button"
-            onClick={handlePurchaseClick}
-            className="shimmer-btn flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold transition-all shadow-sm shadow-amber-500/20 whitespace-nowrap cursor-pointer active:scale-95"
-          >
-            <ShoppingCart className="w-3 h-3 shrink-0" />
-            <span className="truncate">Buy Now</span>
-          </button>
+          {product.purchaseLink ? (
+            <a
+              id={`purchase-btn-${product.id}`}
+              href={product.purchaseLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="shimmer-btn flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold transition-all shadow-sm shadow-amber-500/20 whitespace-nowrap cursor-pointer active:scale-95"
+            >
+              <ShoppingCart className="w-3 h-3 shrink-0" />
+              <span className="truncate">Buy Now</span>
+            </a>
+          ) : (
+            <button
+              id={`purchase-btn-${product.id}`}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(product);
+              }}
+              className="shimmer-btn flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold transition-all shadow-sm shadow-amber-500/20 whitespace-nowrap cursor-pointer active:scale-95"
+            >
+              <ShoppingCart className="w-3 h-3 shrink-0" />
+              <span className="truncate">Buy Now</span>
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

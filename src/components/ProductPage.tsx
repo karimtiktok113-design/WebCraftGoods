@@ -110,19 +110,6 @@ export const ProductPage: React.FC<ProductPageProps> = ({
     }
   };
 
-  const handlePurchase = () => {
-    if (product.purchaseLink) {
-      try {
-        const opened = window.open(product.purchaseLink, '_blank', 'noopener,noreferrer');
-        if (!opened) {
-          window.location.href = product.purchaseLink;
-        }
-      } catch {
-        window.location.href = product.purchaseLink;
-      }
-    }
-  };
-
   // Related products from catalog
   const relatedProducts = products
     .filter((p) => p.id !== product.id && p.status !== 'draft')
@@ -332,19 +319,29 @@ export const ProductPage: React.FC<ProductPageProps> = ({
 
             {/* 3. PURCHASE BUTTON & SHARE */}
             <div className="pt-4 border-t border-slate-800/80 flex items-center gap-2.5 sm:gap-3">
-              <motion.button
-                id="product-page-purchase-btn"
-                type="button"
-                onClick={handlePurchase}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="shimmer-btn flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2.5 px-3.5 sm:px-6 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm md:text-base tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all whitespace-nowrap min-w-0 cursor-pointer"
-              >
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                <span className="whitespace-nowrap">Purchase Now</span>
-                <span className="opacity-80 font-black whitespace-nowrap tabular-nums">({product.price})</span>
-                <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-              </motion.button>
+              {product.purchaseLink ? (
+                <motion.a
+                  id="product-page-purchase-btn"
+                  href={product.purchaseLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="shimmer-btn flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2.5 px-3.5 sm:px-6 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm md:text-base tracking-wide shadow-xl shadow-amber-500/25 hover:shadow-amber-500/35 transition-all whitespace-nowrap min-w-0 cursor-pointer"
+                >
+                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                  <span className="whitespace-nowrap">Purchase Now</span>
+                  <span className="opacity-80 font-black whitespace-nowrap tabular-nums">({product.price})</span>
+                  <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                </motion.a>
+              ) : (
+                <div
+                  id="product-page-purchase-btn"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 sm:px-6 py-3.5 sm:py-4 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs sm:text-sm cursor-not-allowed"
+                >
+                  <span>Currently Unavailable</span>
+                </div>
+              )}
 
               <motion.button
                 type="button"
@@ -419,15 +416,22 @@ export const ProductPage: React.FC<ProductPageProps> = ({
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={handlePurchase}
-                className="w-full sm:w-auto px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 shrink-0"
-              >
-                <ShoppingCart className="w-4 h-4 text-slate-950" />
-                <span>Get It Now for {product.price}</span>
-                <ArrowUpRight className="w-4 h-4 text-slate-950" />
-              </button>
+              {product.purchaseLink ? (
+                <a
+                  href={product.purchaseLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+                >
+                  <ShoppingCart className="w-4 h-4 text-slate-950" />
+                  <span>Get It Now for {product.price}</span>
+                  <ArrowUpRight className="w-4 h-4 text-slate-950" />
+                </a>
+              ) : (
+                <div className="w-full sm:w-auto px-7 py-3 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shrink-0 cursor-not-allowed">
+                  <span>Currently Unavailable</span>
+                </div>
+              )}
             </div>
           </div>
         </section>
